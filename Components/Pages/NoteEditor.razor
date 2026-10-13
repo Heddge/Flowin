@@ -12,9 +12,10 @@
     private bool isEditing = false;
     private Note n = new Note(Guid.Empty, "", "");
 
-
     protected override void OnParametersSet()
     {
+        System.Diagnostics.Debug.WriteLine("onparameterset page entered");
+
         isEditing = false;
 
         if (id.HasValue && id.Value != Guid.Empty)
@@ -32,31 +33,36 @@
     }
 
     protected override async Task OnInitializedAsync()
-        => await _notesContainer.GetNotesAsync();
+    {
+        System.Diagnostics.Debug.WriteLine("oninitializer page entered");
 
-    private void HandleSave()
+        await _notesContainer.GetNotesAsync();
+        await _notesContainer.Synchronizate();
+    }
+
+    private async Task HandleSave()
     {
         if (n == null) return;
         if (!isEditing)
         {
-            _notesContainer.SaveNote(n.Id, n.Title, n.Content);
+            await _notesContainer.SaveNote(n.Id, n.Title, n.Content);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{n.Id}");
 
         }
         else
         {
-            _notesContainer.UpdateNote((Guid)id, n);
+            await _notesContainer.UpdateNote((Guid)id, n);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
         }
 
     }
 
-    public void Delete(Guid noteid)
+    public async Task Delete(Guid noteid)
     {
         if (noteid == Guid.Empty) return;
-        _notesContainer.DeleteNote((Guid)noteid);
+        await _notesContainer.DeleteNote((Guid)noteid);
         id = null;
         isEditing = false;
         Navigation.NavigateTo($"/");
@@ -81,32 +87,34 @@
         <div class="notes-list">
             @if (_notesContainer.GetNotes() != null)
             {
+                System.Diagnostics.Debug.WriteLine("rendering page entered");
+
                 foreach (Note note in _notesContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
                 {
                     if (note == null) continue;
 
                     <div class="note-list-item @(n?.Id == note.Id ? "active" : "")"
-                    @onclick="@(() => Navigation.NavigateTo($"/note-editor/{(Guid)note.Id}"))">
+                         @onclick="@(() => Navigation.NavigateTo($"/note-editor/{(Guid)note.Id}"))">
 
-                    <div class="note-list-icon">N</div>
+                        <div class="note-list-icon">N</div>
 
-                    <span class="note-list-title">@note.Title</span>
+                        <span class="note-list-title">@note.Title</span>
 
-                    <button class="note-delete-button"
-                            title="Удалить"
-                            @onclick="() => Delete((Guid)note.Id)"
-                            @onclick:stopPropagation="true">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M4 7h16" />
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
-                            <path d="M6 7l1 14h10l1-14" />
-                            <path d="M9 7V4h6v3" />
-                        </svg>
-                    </button>
+                        <button class="note-delete-button"
+                                title="Удалить"
+                                @onclick="() => Delete((Guid)note.Id)"
+                                @onclick:stopPropagation="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 7h16" />
+                                <path d="M10 11v6" />
+                                <path d="M14 11v6" />
+                                <path d="M6 7l1 14h10l1-14" />
+                                <path d="M9 7V4h6v3" />
+                            </svg>
+                        </button>
 
-                </div>
-            }
+                    </div>
+                }
             }
 
         </div>

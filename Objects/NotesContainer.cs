@@ -13,6 +13,8 @@ namespace NotesFlow.Objects
     public class NotesContainer
     {
         private List<Note> notes;
+        // managers to work direct with DBs from NotesContainer
+        
         //private NoteDbManager _noteDbManager;
         //private NotesApiManager _notesApiManager;
         private SynchronizeManager _synchronizeManager;
@@ -21,51 +23,64 @@ namespace NotesFlow.Objects
         {
             //_noteDbManager = ndm;
             //_notesApiManager = nam;
+            System.Diagnostics.Debug.WriteLine("constructor notescontainer entered");
+
             _synchronizeManager = sm;
             notes = new List<Note>();
+            notes.Add(new Note(Guid.NewGuid(), "a", "b"));
+            //GetNotesAsync();
+
             //notes = _noteDbManager.GetNotes();
             //GetNotesAsync();
         }
 
+        public async Task Synchronizate()
+            => await _synchronizeManager.SynchronizeSyncStatuses();
+
         public async Task GetNotesAsync()
         {
-            List<Note>? ns = await _notesApiManager.GetNotes();
-            if (ns != null)
-                foreach (var note in ns)
-                    this.notes.Add(note);
+            System.Diagnostics.Debug.WriteLine("entered notescontainer.GetNotesAsync");
+            this.notes = _synchronizeManager.GetNotes();
+            
+            //if (ns != null)
+                //foreach (var note in ns)
+                    //this.notes.Add(note);
         }
 
         public async Task SaveNote(Guid id, string title, string content)
         {
+
             Note n = new Note(id, title, content);
+            notes.Add(n);
+            await _synchronizeManager.SaveNote(n);
+
             //if (_noteDbManager.AddNote(n))
             //notes.Add(n);
-            if (_notesApiManager.SaveNote(n) != null)
-                notes.Add(n);
         }
 
-        public void UpdateNote(Guid id, Note n)
+        public async Task UpdateNote(Guid id, Note n)
         {
             int idx = notes.FindIndex(x => x.Id == id);
             if (idx == -1)
                 return;
+
             n.UpdatedAt = DateTime.UtcNow;
-            if (_notesApiManager.UpdateNote(n) != null)
-            {
-                notes[idx].Title = n.Title;
-                notes[idx].Content = n.Content;
-            }
+            notes[idx].Title = n.Title;
+            notes[idx].Content = n.Content;
+
+            await _synchronizeManager.UpdateNote(n);
         }
 
-        public void DeleteNote(Guid id)
+        public async Task DeleteNote(Guid id)
         {
             Note? n = notes.FirstOrDefault(x => x.Id == id);
             if (n != null)
             {
-                if (_notesApiManager.DeleteNote(id) != null)
-                    notes.Remove(n);
+                await _synchronizeManager.DeleteNote(n);
+                notes.Remove(n);
+
                 //if (_noteDbManager.DeleteNote(n))
-                    //notes.Remove(n);
+                //notes.Remove(n);
             }
         }
 
