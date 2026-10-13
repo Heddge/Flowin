@@ -27,9 +27,10 @@ namespace NotesFlow
             builder.Services.AddSingleton<NotesContainer>();
             builder.Services.AddSingleton<JsonParserManager>();
             builder.Services.AddSingleton<AppStorageManager>();
+            builder.Services.AddSingleton<SynchronizeManager>();
             builder.Services.AddSingleton<NoteDbManager>();
             //builder.Services.AddDbContext<NoteDbContext>(options => options.UseSqlite("Data Source="+_dbpath));
-            builder.Services.AddPooledDbContextFactory<NoteDbContext>(options => options.UseSqlite("Data Source="+_dbpath));
+            builder.Services.AddPooledDbContextFactory<NoteDbContext>(options => options.UseSqlite("Data Source=" + _dbpath));
             builder.Services.AddHttpClient<NotesApiManager>();
 
 #if DEBUG
@@ -37,14 +38,35 @@ namespace NotesFlow
             builder.Logging.AddDebug();
 #endif
 
-            var app =  builder.Build();
+            var app = builder.Build();
 
             using var scope = app.Services.CreateScope();
             var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<NoteDbContext>>();
             using var context = factory.CreateDbContext();
             context.Database.EnsureCreated();
-            
 
+            System.Diagnostics.Debug.WriteLine("entered maui program");
+
+
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("notescontainer creating");
+                var n = app.Services.GetRequiredService<NotesContainer>();
+                System.Diagnostics.Debug.WriteLine("notescontainer created");
+
+            }
+            catch (Exception ex)
+            {
+
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                throw;
+            }
+            context.Database.ExecuteSqlRaw("""
+    CREATE TABLE IF NOT EXISTS SyncStatuses (
+        NoteId TEXT NOT NULL PRIMARY KEY,
+        Status INTEGER NOT NULL
+    );
+    """);
 
             return app;
         }
