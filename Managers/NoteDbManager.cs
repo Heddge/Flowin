@@ -43,7 +43,11 @@ namespace NotesFlow.Managers
             List<Note> result = new List<Note>();
             using var factory = _contextFactory.CreateDbContext();
             foreach (var note in factory.Notes.ToList())
+            {
+                note.CreatedAt = DateTime.SpecifyKind(note.CreatedAt, DateTimeKind.Utc);
+                note.UpdatedAt = DateTime.SpecifyKind(note.UpdatedAt, DateTimeKind.Utc);
                 result.Add(note);
+            }
 
             return result;
         }

@@ -30,5 +30,8 @@ namespace NotesFlow.Objects
             CreatedAt = crAt;
             UpdatedAt = updAt;
         }
+
+        public override string ToString()
+            => $"ID -> {this.Id}; title -> {this.Title}";
     }
 }

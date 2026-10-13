@@ -32,10 +32,15 @@ namespace NotesFlow.Managers
                     case OperationStatus.Created:
                         {
                             Note? note = _noteDbManager.GetNote(toSync.NoteId);
+                            note.CreatedAt = DateTime.SpecifyKind(note.CreatedAt, DateTimeKind.Utc);
+                            note.UpdatedAt = DateTime.SpecifyKind(note.UpdatedAt, DateTimeKind.Utc);
+
                             if (note != null)
                                 if (await _notesApiManager.SaveNote(note) != null)
+                                {
                                     _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                                break;
+                                }
+                            break;
                         }
                     case OperationStatus.Updated:
                         {
