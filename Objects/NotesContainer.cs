@@ -35,7 +35,10 @@ namespace NotesFlow.Objects
         }
 
         public async Task Synchronizate()
-            => await _synchronizeManager.SynchronizeSyncStatuses();
+        {
+            await _synchronizeManager.SynchronizeSyncStatuses();
+            this.notes = _synchronizeManager.GetNotes();
+        }
 
         public async Task GetNotesAsync()
         {

@@ -83,6 +83,17 @@ namespace NotesFlow.Managers
             return factory.SyncStatuses.Count() == 0;
         }
 
+        public List<SyncStatus> GetDeletedStatuses()
+        {
+            using var factory = _contextFactory.CreateDbContext();
+            return factory.SyncStatuses.Where(x => x.Status == OperationStatus.Deleted).ToList<SyncStatus>();
+        }
+        public List<SyncStatus> GetUpdatedStatuses()
+        {
+            using var factory = _contextFactory.CreateDbContext();
+            return factory.SyncStatuses.Where(x => x.Status == OperationStatus.Updated).ToList<SyncStatus>();
+        }
+
         public List<SyncStatus> GetAllSyncStatuses()
         {
             using var factory = _contextFactory.CreateDbContext();

@@ -24,6 +24,41 @@ namespace NotesFlow.Managers
             _httpClient = hc;
         }
 
+        public async Task<Dictionary<Guid, DateTime>?> GetIdUpdateAt()
+        {
+            try
+            {
+                var response = await GetNotes();
+                if (response == null)
+                    return null;
+                return response.Select(x => new KeyValuePair<Guid, DateTime>(x.Id, x.UpdatedAt)).ToDictionary<Guid, DateTime>();
+            }
+            catch (HttpRequestException ex_request_err)
+            {
+                System.Diagnostics.Debug.WriteLine("404/503. HTTP exception NotesApiManager.GetNote(id). ServiceUnavaliable or NotFound");
+                System.Diagnostics.Debug.WriteLine(ex_request_err.Message);
+                return null;
+            }
+            catch (UriFormatException ex_uri)
+            {
+                System.Diagnostics.Debug.WriteLine("HTTP exception NotesApiManager.GetNote(id). IncorrectApiUrl");
+                System.Diagnostics.Debug.WriteLine(ex_uri.Message);
+                return null;
+            }
+            catch (JsonException ex_json)
+            {
+                System.Diagnostics.Debug.WriteLine("HTTP exception NotesApiManager.GetNote(id). IncorrectJson");
+                System.Diagnostics.Debug.WriteLine(ex_json.Message);
+                return null;
+            }
+            catch (OperationCanceledException ex_canceled)
+            {
+                System.Diagnostics.Debug.WriteLine("HTTP exception NotesApiManager.GetNote(id). ServiceUnavaliable");
+                System.Diagnostics.Debug.WriteLine(ex_canceled.Message);
+                return null;
+            }
+        }
+
         public async Task<RequestResultStatus<Note?>> GetNote(Guid Id)
         {
             try
