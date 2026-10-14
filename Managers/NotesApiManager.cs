@@ -5,6 +5,8 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using NotesFlow.Objects;
+using Microsoft.AspNetCore;
+using System.Text.Json;
 
 namespace NotesFlow.Managers
 {
@@ -22,17 +24,45 @@ namespace NotesFlow.Managers
             _httpClient = hc;
         }
 
-        public async Task<Note?> GetNote(Guid Id)
+        public async Task<RequestResultStatus<Note?>> GetNote(Guid Id)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<Note>(_apiUrl + "/" + Id);
+                var response = await _httpClient.GetAsync(_apiUrl + "/" + Id.ToString().ToLower());
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    System.Diagnostics.Debug.WriteLine($"GET URL: {response.RequestMessage?.RequestUri}");
+                    System.Diagnostics.Debug.WriteLine($" HTTP STATUS: {(int)response.StatusCode}");
+                    System.Diagnostics.Debug.WriteLine(await response.Content.ReadFromJsonAsync<Note>());
+                    return new RequestResultStatus<Note?>(RequestStatus.NotFound, null);
+                }
+
+                return new RequestResultStatus<Note?>(RequestStatus.Success, await response.Content.ReadFromJsonAsync<Note?>());
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex_request_err)
             {
-                System.Diagnostics.Debug.WriteLine("404. HTTP exception NotesApiManager.GetNote(id).");
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                return null;
+                System.Diagnostics.Debug.WriteLine("404/503. HTTP exception NotesApiManager.GetNote(id). ServiceUnavaliable or NotFound");
+                System.Diagnostics.Debug.WriteLine(ex_request_err.Message);
+                return new RequestResultStatus<Note?>(RequestStatus.ServiceUnavaliable, null);
+            }
+            catch (UriFormatException ex_uri)
+            {
+                System.Diagnostics.Debug.WriteLine("HTTP exception NotesApiManager.GetNote(id). IncorrectApiUrl");
+                System.Diagnostics.Debug.WriteLine(ex_uri.Message);
+                return new RequestResultStatus<Note?>(RequestStatus.IncorrectApiUrl, null);
+            }
+            catch (JsonException ex_json)
+            {
+                System.Diagnostics.Debug.WriteLine("HTTP exception NotesApiManager.GetNote(id). IncorrectJson");
+                System.Diagnostics.Debug.WriteLine(ex_json.Message);
+                return new RequestResultStatus<Note?>(RequestStatus.IncorrectJson, null);
+            }
+            catch (OperationCanceledException ex_canceled)
+            {
+                System.Diagnostics.Debug.WriteLine("HTTP exception NotesApiManager.GetNote(id). ServiceUnavaliable");
+                System.Diagnostics.Debug.WriteLine(ex_canceled.Message);
+                return new RequestResultStatus<Note?>(RequestStatus.ServiceUnavaliable, null);
             }
         }
 

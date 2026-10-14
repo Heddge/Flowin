@@ -61,9 +61,18 @@ namespace NotesFlow.Managers
 
         public bool DeleteNote(Note n)
         {
-            using var factory = _contextFactory.CreateDbContext();
-            factory.Notes.Remove(n);
-            return factory.SaveChanges() == 1;
+            try
+            {
+                using var factory = _contextFactory.CreateDbContext();
+                factory.Notes.Remove(n);
+                return factory.SaveChanges() == 1;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception in NoteDbManager.DeleteNote(Note)");
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return false;
+            }
         }
 
         // TO WORK WITH SYNCSTATUS TABLE IN SQLITE

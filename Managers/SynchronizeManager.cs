@@ -52,17 +52,23 @@ namespace NotesFlow.Managers
                         }
                     case OperationStatus.Deleted:
                         {
-                            if (await _notesApiManager.GetNote(toSync.NoteId) != null)
+                            var response = await _notesApiManager.GetNote(toSync.NoteId);
+                            if (response.Status == RequestStatus.Success)
                             {
-                                if (await _notesApiManager.DeleteNote(toSync.NoteId))
-                                {
-                                    _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                                    break;
-                                }
-                                else
-                                    break;
+                                if (response.data != null)
+                                    if (await _notesApiManager.DeleteNote(toSync.NoteId))
+                                    {
+                                        _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                                        break;
+                                    }
+                                    else
+                                        break;
                             }
-                            _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                            if (response.Status == RequestStatus.NotFound)
+                            {
+                                _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                                break;
+                            }    
                             break;
                         }
                 }
