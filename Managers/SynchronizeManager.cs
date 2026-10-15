@@ -23,8 +23,6 @@ namespace NotesFlow.Managers
 
         public async Task SynchronizeSyncStatuses()
         {
-            //if (_noteDbManager.IsSyncStatusesEmpty()) return;
-
             foreach (SyncStatus toSync in _noteDbManager.GetDeletedStatuses())
             {
                 var response = await _notesApiManager.GetNote(toSync.NoteId);
@@ -53,22 +51,25 @@ namespace NotesFlow.Managers
             if (postgrToUpd != null)
                 foreach (SyncStatus toSync in updSyncStatuses)
                 {
-                    if (_noteDbManager.GetNote(toSync.NoteId)?.UpdatedAt < postgrToUpd[toSync.NoteId])
+                    if (postgrToUpd.ContainsKey(toSync.NoteId))
                     {
-                        var request = await _notesApiManager.GetNote(toSync.NoteId);
-                        if (request.data != null)
+                        if (_noteDbManager.GetNote(toSync.NoteId)?.UpdatedAt < postgrToUpd[toSync.NoteId])
                         {
-                            _noteDbManager.UpdateNote(request.data);
-                            _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                            var request = await _notesApiManager.GetNote(toSync.NoteId);
+                            if (request.data != null)
+                            {
+                                _noteDbManager.UpdateNote(request.data);
+                                _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                            }
                         }
-                    }
-                    else if (_noteDbManager.GetNote(toSync.NoteId)?.UpdatedAt > postgrToUpd[toSync.NoteId])
-                    {
-                        Note? request = _noteDbManager.GetNote(toSync.NoteId);
-                        if (request != null)
+                        else if (_noteDbManager.GetNote(toSync.NoteId)?.UpdatedAt > postgrToUpd[toSync.NoteId])
                         {
-                            await _notesApiManager.UpdateNote(request);
-                            _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                            Note? request = _noteDbManager.GetNote(toSync.NoteId);
+                            if (request != null)
+                            {
+                                await _notesApiManager.UpdateNote(request);
+                                _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                            }
                         }
                     }
                 }
@@ -77,15 +78,18 @@ namespace NotesFlow.Managers
             {
                 foreach (Note n in _noteDbManager.GetNotes())
                 {
-                    if (n.UpdatedAt < postgrToUpd[n.Id])
+                    if (postgrToUpd.ContainsKey(n.Id))
                     {
-                        var request = await _notesApiManager.GetNote(n.Id);
-                        if (request.data != null) _noteDbManager.UpdateNote(request.data);
-                    }
-                    if (n.UpdatedAt > postgrToUpd[n.Id])
-                    {
-                        Note? request = _noteDbManager.GetNote(n.Id);
-                        if (request != null) await _notesApiManager.UpdateNote(request);
+                        if (n.UpdatedAt < postgrToUpd[n.Id])
+                        {
+                            var request = await _notesApiManager.GetNote(n.Id);
+                            if (request.data != null) _noteDbManager.UpdateNote(request.data);
+                        }
+                        if (n.UpdatedAt > postgrToUpd[n.Id])
+                        {
+                            Note? request = _noteDbManager.GetNote(n.Id);
+                            if (request != null) await _notesApiManager.UpdateNote(request);
+                        }
                     }
                 }
                 foreach (KeyValuePair<Guid, DateTime> updnote in postgrToUpd)

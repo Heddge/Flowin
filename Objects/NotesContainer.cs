@@ -13,25 +13,12 @@ namespace NotesFlow.Objects
     public class NotesContainer
     {
         private List<Note> notes;
-        // managers to work direct with DBs from NotesContainer
-        
-        //private NoteDbManager _noteDbManager;
-        //private NotesApiManager _notesApiManager;
         private SynchronizeManager _synchronizeManager;
 
         public NotesContainer(SynchronizeManager sm)
         {
-            //_noteDbManager = ndm;
-            //_notesApiManager = nam;
-            System.Diagnostics.Debug.WriteLine("constructor notescontainer entered");
-
             _synchronizeManager = sm;
             notes = new List<Note>();
-            notes.Add(new Note(Guid.NewGuid(), "a", "b"));
-            //GetNotesAsync();
-
-            //notes = _noteDbManager.GetNotes();
-            //GetNotesAsync();
         }
 
         public async Task Synchronizate()
@@ -41,24 +28,13 @@ namespace NotesFlow.Objects
         }
 
         public async Task GetNotesAsync()
-        {
-            System.Diagnostics.Debug.WriteLine("entered notescontainer.GetNotesAsync");
-            this.notes = _synchronizeManager.GetNotes();
-            
-            //if (ns != null)
-                //foreach (var note in ns)
-                    //this.notes.Add(note);
-        }
+            => this.notes = _synchronizeManager.GetNotes();
 
         public async Task SaveNote(Guid id, string title, string content)
         {
-
             Note n = new Note(id, title, content);
             notes.Add(n);
             await _synchronizeManager.SaveNote(n);
-
-            //if (_noteDbManager.AddNote(n))
-            //notes.Add(n);
         }
 
         public async Task UpdateNote(Guid id, Note n)
@@ -81,9 +57,6 @@ namespace NotesFlow.Objects
             {
                 await _synchronizeManager.DeleteNote(n);
                 notes.Remove(n);
-
-                //if (_noteDbManager.DeleteNote(n))
-                //notes.Remove(n);
             }
         }
 
