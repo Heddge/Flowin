@@ -11,6 +11,7 @@
 
     private bool isEditing = false;
     private Note n = new Note(Guid.Empty, "", "");
+    private List<Note> notes = new List<Note>();
 
     protected override void OnParametersSet()
     {
@@ -34,14 +35,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        System.Diagnostics.Debug.WriteLine("oninitializer page entered");
-
-        await _notesContainer.GetNotesAsync();
-        await _notesContainer.Synchronizate();
+        await SynchronizateIt();
     }
 
     private async Task HandleSave()
     {
+
         if (n == null) return;
         if (!isEditing)
         {
@@ -59,6 +58,20 @@
 
     }
 
+    public async Task SynchronizateIt()
+    {
+        await _notesContainer.Synchronizate();
+        await _notesContainer.GetNotesAsync();
+
+        notes = _notesContainer.GetNotes();
+        if (n.Id != Guid.Empty)
+        {
+            Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
+            return;
+        }
+        Navigation.NavigateTo("/");
+    }
+
     public async Task Delete(Guid noteid)
     {
         if (noteid == Guid.Empty) return;
@@ -70,6 +83,20 @@
 }
 
 <div class="notes-layout">
+
+    <button class="sync-button"
+            @onclick="SynchronizateIt"
+            title="Синхронизировать заметки"
+            aria-label="Синхронизировать заметки">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7v5h-5" />
+            <path d="M4 17v-5h5" />
+            <path d="M5.64 9A7 7 0 0 1 17.5 6.5L20 12" />
+            <path d="M18.36 15A7 7 0 0 1 6.5 17.5L4 12" />
+        </svg>
+    </button>
 
     <!-- Сайдбар -->
     <aside class="notes-sidebar">

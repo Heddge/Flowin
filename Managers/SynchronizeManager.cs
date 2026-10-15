@@ -23,6 +23,8 @@ namespace NotesFlow.Managers
 
         public async Task SynchronizeSyncStatuses()
         {
+            System.Diagnostics.Debug.WriteLine("Entered main Sycnhronize method");
+
             foreach (SyncStatus toSync in _noteDbManager.GetDeletedStatuses())
             {
                 var response = await _notesApiManager.GetNote(toSync.NoteId);

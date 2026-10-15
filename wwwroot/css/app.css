@@ -506,3 +506,32 @@ a,
     right: 28px !important;
     bottom: 28px !important;
 }
+
+.sync-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sync-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sync-button:hover {
+    background-color: rgba(128, 128, 128, 0.18);
+}
+
+.sync-button:active svg {
+    transform: rotate(30deg);
+}
+
