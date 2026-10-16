@@ -710,3 +710,34 @@ a,
         .note-editor::-webkit-scrollbar-thumb:hover {
             background: #555555;
         }
+
+/* Меню команд Markdown — тёмная тема NotesFlow */
+.note-editor-content .slash-menu,
+.note-editor-content [role="menu"] {
+    background: #202020;
+    color: #ffffff;
+    border: 1px solid #383838;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+}
+
+    /* Пункты меню */
+    .note-editor-content .slash-menu button,
+    .note-editor-content [role="menu"] [role="menuitem"] {
+        background: transparent;
+        color: #e5e5e5;
+        border-radius: 6px;
+    }
+
+        /* Наведение и выбранный пункт */
+        .note-editor-content .slash-menu button:hover,
+        .note-editor-content [role="menu"] [role="menuitem"]:hover {
+            background: #303030;
+            color: #ffffff;
+        }
+
+    /* Второстепенные подписи и описания */
+    .note-editor-content .slash-menu small,
+    .note-editor-content .slash-menu p {
+        color: #a0a0a0;
+    }

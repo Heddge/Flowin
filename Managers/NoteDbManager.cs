@@ -94,6 +94,12 @@ namespace NotesFlow.Managers
             return factory.SyncStatuses.Where(x => x.Status == OperationStatus.Updated).ToList<SyncStatus>();
         }
 
+        public List<SyncStatus> GetCreatedStatuses()
+        {
+            using var factory = _contextFactory.CreateDbContext();
+            return factory.SyncStatuses.Where(x => x.Status == OperationStatus.Created).ToList<SyncStatus>();
+        }
+
         public List<SyncStatus> GetAllSyncStatuses()
         {
             using var factory = _contextFactory.CreateDbContext();

@@ -77,7 +77,6 @@ namespace NotesFlow.Managers
             if (postgrToUpd == null)
                 return;
             var local_notes = _noteDbManager.GetNotes();
-
             foreach (Note n in local_notes)
             {
                 if (postgrToUpd.ContainsKey(n.Id))
@@ -119,58 +118,22 @@ namespace NotesFlow.Managers
         }
 
         /// <summary>
-        /// Checking SyncStatuses table and synchronizate by it.
+        /// Posting Created in SQL notes to PostgreSQL
         /// </summary>
         /// <returns></returns>
-        private async Task SynchronizeSyncStatuses()
+        private async Task SynchronizeCreated()
         {
             System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_SYNCSTATUSES");
-            foreach (SyncStatus toSync in _noteDbManager.GetAllSyncStatuses())
+            foreach (SyncStatus toSync in _noteDbManager.GetCreatedStatuses())
             {
-                switch (toSync.Status)
+                Note? note = _noteDbManager.GetNote(toSync.NoteId);
+                if (note != null)
                 {
-                    case OperationStatus.Created:
-                        {
-                            Note? note = _noteDbManager.GetNote(toSync.NoteId);
-                            note.CreatedAt = DateTime.SpecifyKind(note.CreatedAt, DateTimeKind.Utc);
-                            note.UpdatedAt = DateTime.SpecifyKind(note.UpdatedAt, DateTimeKind.Utc);
+                    note.CreatedAt = DateTime.SpecifyKind(note.CreatedAt, DateTimeKind.Utc);
+                    note.UpdatedAt = DateTime.SpecifyKind(note.UpdatedAt, DateTimeKind.Utc);
 
-                            if (note != null)
-                                if (await _notesApiManager.SaveNote(note) != null)
-                                {
-                                    _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                                }
-                            break;
-                        }
-                    case OperationStatus.Updated:
-                        {
-                            Note? note = _noteDbManager.GetNote(toSync.NoteId);
-                            if (note != null)
-                                if (await _notesApiManager.UpdateNote(note) != null)
-                                    _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                            break;
-                        }
-                    case OperationStatus.Deleted:
-                        {
-                            var response = await _notesApiManager.GetNote(toSync.NoteId);
-                            if (response.Status == RequestStatus.Success)
-                            {
-                                if (response.data != null)
-                                    if (await _notesApiManager.DeleteNote(toSync.NoteId))
-                                    {
-                                        _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                                        break;
-                                    }
-                                    else
-                                        break;
-                            }
-                            if (response.Status == RequestStatus.NotFound)
-                            {
-                                _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                                break;
-                            }
-                            break;
-                        }
+                    if (await _notesApiManager.SaveNote(note) != null)
+                        _noteDbManager.DeleteSyncStatus(toSync.NoteId);
                 }
             }
         }
@@ -181,7 +144,7 @@ namespace NotesFlow.Managers
             SynchronizeDeleted();
             SynchronizeUpdated();
             SynchronizeAll();
-            SynchronizeSyncStatuses();
+            SynchronizeCreated();
         }
 
         public List<Note> GetNotes()
