@@ -4,14 +4,43 @@
 
 @inject NotesContainer _notesContainer
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
 @code {
+    private ElementReference markdownEditorElement;
+    private string? markdownEditorId;
+    private Guid? editorNoteId;
     [Parameter]
     public Guid? id { get; set; }
 
     private bool isEditing = false;
     private Note n = new Note(Guid.Empty, "", "");
     private List<Note> notes = new List<Note>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (markdownEditorId == null)
+        {
+            markdownEditorId = await JS.InvokeAsync<string>(
+                "blazorMarkdownEditor.create",
+                markdownEditorElement,
+                new { markdown = n.Content ?? "" });
+
+            editorNoteId = n.Id;
+            return;
+        }
+
+        if (editorNoteId != n.Id)
+        {
+            await JS.InvokeVoidAsync(
+                "blazorMarkdownEditor.setMarkdown",
+                markdownEditorId,
+                n.Content ?? "");
+
+            editorNoteId = n.Id;
+        }
+    }
 
     protected override void OnParametersSet()
     {
@@ -42,6 +71,14 @@
     {
 
         if (n == null) return;
+
+        if (markdownEditorId != null)
+        {
+            n.Content = await JS.InvokeAsync<string>(
+                "blazorMarkdownEditor.getMarkdown",
+                markdownEditorId);
+        }
+
         if (!isEditing)
         {
             await _notesContainer.SaveNote(n.Id, n.Title, n.Content);
@@ -56,6 +93,18 @@
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
         }
 
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (markdownEditorId != null)
+        {
+            await JS.InvokeVoidAsync(
+                "blazorMarkdownEditor.destroy",
+                markdownEditorId);
+
+            markdownEditorId = null;
+        }
     }
 
     public async Task SynchronizateIt()
@@ -156,9 +205,10 @@
                @bind="@n.Title"
                placeholder="Новая заметка" />
 
-        <textarea class="note-editor-content"
-                  @bind="@n.Content"
-                  placeholder="Введите ваш текст..."></textarea>
+        <div class="note-editor-content"
+             @ref="markdownEditorElement"
+             spellcheck="false">
+         </div>
 
         <div class="note-editor-actions">
 

@@ -522,16 +522,191 @@ a,
     transition: background-color 0.2s ease;
 }
 
-.sync-button svg {
-    width: 20px;
-    height: 20px;
+    .sync-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .sync-button:hover {
+        background-color: rgba(128, 128, 128, 0.18);
+    }
+
+    .sync-button:active svg {
+        transform: rotate(30deg);
+    }
+
+/* =========================================================
+   NotesFlow — WYSIWYG Markdown Editor
+   ========================================================= */
+
+.note-editor-content {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.sync-button:hover {
-    background-color: rgba(128, 128, 128, 0.18);
+    /* Область редактирования ProseMirror */
+    .note-editor-content .ProseMirror {
+        min-height: 100%;
+        outline: none;
+        color: #cfcfcf;
+        font-family: inherit;
+        font-size: 17px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+        /* Заголовки внутри заметки */
+        .note-editor-content .ProseMirror h1,
+        .note-editor-content .ProseMirror h2,
+        .note-editor-content .ProseMirror h3 {
+            color: #e5e5e5;
+            line-height: 1.3;
+        }
+
+        /* Ссылки */
+        .note-editor-content .ProseMirror a {
+            color: #a78bfa;
+        }
+
+        /* Цитаты */
+        .note-editor-content .ProseMirror blockquote {
+            border-left: 3px solid #68469b;
+            margin-left: 0;
+            padding-left: 16px;
+            color: #aaaaaa;
+        }
+
+        /* Блоки кода */
+        .note-editor-content .ProseMirror pre {
+            overflow-x: auto;
+            padding: 12px;
+            border-radius: 8px;
+            background: #242424;
+            color: #dddddd;
+        }
+
+        /* Выделение текста */
+        .note-editor-content .ProseMirror ::selection {
+            background: #68469b;
+            color: #ffffff;
+        }
+
+/* Цвет и читаемость Markdown-редактора */
+.note-editor-content {
+    background: #1c1c1c;
+    color: #ffffff;
 }
 
-.sync-button:active svg {
-    transform: rotate(30deg);
+    /* Основное содержимое редактора */
+    .note-editor-content .ProseMirror {
+        background: transparent;
+        color: #ffffff;
+    }
+
+        /* Заголовки */
+        .note-editor-content .ProseMirror h1,
+        .note-editor-content .ProseMirror h2,
+        .note-editor-content .ProseMirror h3 {
+            color: #ffffff;
+        }
+
+        /* Обычные абзацы и списки */
+        .note-editor-content .ProseMirror p,
+        .note-editor-content .ProseMirror li {
+            color: #ffffff;
+        }
+
+            /* Подсказки редактора, если библиотека их использует */
+            .note-editor-content .ProseMirror p.is-editor-empty:first-child::before {
+                color: #888888;
+            }
+
+
+/* Скругление поля редактора */
+.note-editor-content {
+    border-radius: 8px;
+    overflow: hidden;
 }
 
+    /* Отступ текста от скруглённых краёв */
+    .note-editor-content .ProseMirror {
+        padding: 12px;
+        box-sizing: border-box;
+    }
+
+        /* Тёмная тема для таблиц Markdown */
+        .note-editor-content .ProseMirror table {
+            border-collapse: collapse;
+            background: transparent;
+            color: #ffffff;
+        }
+
+        /* Заголовочная строка таблицы */
+        .note-editor-content .ProseMirror th {
+            background-color: #242424;
+            color: #ffffff;
+        }
+
+        /* Обычные ячейки */
+        .note-editor-content .ProseMirror td {
+            background-color: #1c1c1c;
+            color: #ffffff;
+        }
+
+        /* Границы таблицы */
+        .note-editor-content .ProseMirror th,
+        .note-editor-content .ProseMirror td {
+            border: 1px solid #3a3a3a;
+            padding: 8px 12px;
+        }
+
+/* Основная область заметки прокручивается целиком */
+.note-editor {
+    min-height: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Заголовок уезжает вместе с содержимым */
+.note-editor-title {
+    flex-shrink: 0;
+}
+
+/* Редактор занимает место по содержимому */
+.note-editor-content {
+    height: auto !important;
+    min-height: calc(100vh - 220px);
+    overflow: visible !important;
+    flex-shrink: 0;
+}
+
+/* Кнопки остаются в потоке страницы */
+.note-editor-actions {
+    flex-shrink: 0;
+}
+
+/* Тёмный скроллбар Firefox */
+.note-editor {
+    scrollbar-width: thin;
+    scrollbar-color: #454545 #171717;
+}
+
+    /* Тёмный скроллбар Chromium / WebView */
+    .note-editor::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .note-editor::-webkit-scrollbar-track {
+        background: #171717;
+    }
+
+    .note-editor::-webkit-scrollbar-thumb {
+        background: #383838;
+        border-radius: 8px;
+        border: 2px solid #171717;
+    }
+
+        .note-editor::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
