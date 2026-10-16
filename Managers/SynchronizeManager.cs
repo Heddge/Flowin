@@ -21,41 +21,34 @@ namespace NotesFlow.Managers
             _notesApiManager = nam;
         }
 
-        public async Task SynchronizeSyncStatuses()
+        /// <summary>
+        /// Deleting Deleted in SQL notes in PostgreSQL
+        /// </summary>
+        /// <returns>Asyncronus work.</returns>
+        private async Task SynchronizeDeleted()
         {
-            System.Diagnostics.Debug.WriteLine("Entered main Sycnhronize method");
-
             foreach (SyncStatus toSync in _noteDbManager.GetDeletedStatuses())
-            {
-                var response = await _notesApiManager.GetNote(toSync.NoteId);
-                if (response.Status == RequestStatus.Success)
-                {
-                    if (response.data != null)
-                        if (await _notesApiManager.DeleteNote(toSync.NoteId))
-                        {
-                            _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                            continue;
-                        }
-                        else
-                            continue;
-                }
-                if (response.Status == RequestStatus.NotFound)
-                {
+                if (await _notesApiManager.DeleteNote(toSync.NoteId))
                     _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                    continue;
-                }
-                continue;
-            }
+        }
 
+        /// <summary>
+        /// Comparing notes w syncstatus Updated with notes in PostgreSQL. Newer are donwloading to needed DB
+        /// </summary>
+        /// <returns></returns>
+        private async Task SynchronizeUpdated()
+        {
+            System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_UPDATED");
             Dictionary<Guid, DateTime>? postgrToUpd = await _notesApiManager.GetIdUpdateAt();
             List<SyncStatus> updSyncStatuses = _noteDbManager.GetUpdatedStatuses();
 
             if (postgrToUpd != null)
                 foreach (SyncStatus toSync in updSyncStatuses)
                 {
-                    if (postgrToUpd.ContainsKey(toSync.NoteId))
+                    var n = _noteDbManager.GetNote(toSync.NoteId);
+                    if (postgrToUpd.ContainsKey(toSync.NoteId) && n != null)
                     {
-                        if (_noteDbManager.GetNote(toSync.NoteId)?.UpdatedAt < postgrToUpd[toSync.NoteId])
+                        if (n.UpdatedAt < postgrToUpd[toSync.NoteId])
                         {
                             var request = await _notesApiManager.GetNote(toSync.NoteId);
                             if (request.data != null)
@@ -64,61 +57,74 @@ namespace NotesFlow.Managers
                                 _noteDbManager.DeleteSyncStatus(toSync.NoteId);
                             }
                         }
-                        else if (_noteDbManager.GetNote(toSync.NoteId)?.UpdatedAt > postgrToUpd[toSync.NoteId])
+                        else if (n.UpdatedAt > postgrToUpd[toSync.NoteId])
                         {
-                            Note? request = _noteDbManager.GetNote(toSync.NoteId);
-                            if (request != null)
-                            {
-                                await _notesApiManager.UpdateNote(request);
+                            if (await _notesApiManager.UpdateNote(n) != null)
                                 _noteDbManager.DeleteSyncStatus(toSync.NoteId);
-                            }
                         }
                     }
                 }
-            postgrToUpd = await _notesApiManager.GetIdUpdateAt();
-            if (postgrToUpd != null)
+        }
+
+        /// <summary>
+        /// Comparing all PostgreSQL notes with SQL notes.
+        /// </summary>
+        /// <returns></returns>
+        private async Task SynchronizeAll()
+        {
+            System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_ALL");
+            Dictionary<Guid, DateTime>? postgrToUpd = await _notesApiManager.GetIdUpdateAt();
+            if (postgrToUpd == null)
+                return;
+            var local_notes = _noteDbManager.GetNotes();
+
+            foreach (Note n in local_notes)
             {
-                foreach (Note n in _noteDbManager.GetNotes())
+                if (postgrToUpd.ContainsKey(n.Id))
                 {
-                    if (postgrToUpd.ContainsKey(n.Id))
+                    if (n.UpdatedAt < postgrToUpd[n.Id])
                     {
-                        if (n.UpdatedAt < postgrToUpd[n.Id])
-                        {
-                            var request = await _notesApiManager.GetNote(n.Id);
-                            if (request.data != null) _noteDbManager.UpdateNote(request.data);
-                        }
-                        if (n.UpdatedAt > postgrToUpd[n.Id])
-                        {
-                            Note? request = _noteDbManager.GetNote(n.Id);
-                            if (request != null) await _notesApiManager.UpdateNote(request);
-                        }
+                        var request = await _notesApiManager.GetNote(n.Id);
+                        if (request.data != null) _noteDbManager.UpdateNote(request.data);
                     }
-                }
-                foreach (KeyValuePair<Guid, DateTime> updnote in postgrToUpd)
-                {
-                    Note? response = _noteDbManager.GetNote(updnote.Key);
-                    if (response != null)
+                    if (n.UpdatedAt > postgrToUpd[n.Id])
                     {
-                        if (updnote.Value > response.UpdatedAt)
-                        {
-                            var request = await _notesApiManager.GetNote(updnote.Key);
-                            if (request.data != null) _noteDbManager.UpdateNote(request.data);
-                        }
-                        if (updnote.Value < response.UpdatedAt)
-                        {
-                            Note? request = _noteDbManager.GetNote(updnote.Key);
-                            if (request != null) await _notesApiManager.UpdateNote(request);
-                        }
-                    }
-                    else
-                    {
-                        var request = await _notesApiManager.GetNote(updnote.Key);
-                        if (request.data != null) _noteDbManager.AddNote(request.data);
+                        Note? request = _noteDbManager.GetNote(n.Id);
+                        if (request != null) await _notesApiManager.UpdateNote(request);
                     }
                 }
             }
+            foreach (KeyValuePair<Guid, DateTime> updnote in postgrToUpd)
+            {
+                Note? response = local_notes.FirstOrDefault(x => x.Id == updnote.Key);
+                if (response != null)
+                {
+                    if (updnote.Value > response.UpdatedAt)
+                    {
+                        var request = await _notesApiManager.GetNote(updnote.Key);
+                        if (request.data != null) _noteDbManager.UpdateNote(request.data);
+                    }
+                    if (updnote.Value < response.UpdatedAt)
+                    {
+                        Note? request = _noteDbManager.GetNote(updnote.Key);
+                        if (request != null) await _notesApiManager.UpdateNote(request);
+                    }
+                }
+                else
+                {
+                    var request = await _notesApiManager.GetNote(updnote.Key);
+                    if (request.data != null) _noteDbManager.AddNote(request.data);
+                }
+            }
+        }
 
-
+        /// <summary>
+        /// Checking SyncStatuses table and synchronizate by it.
+        /// </summary>
+        /// <returns></returns>
+        private async Task SynchronizeSyncStatuses()
+        {
+            System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_SYNCSTATUSES");
             foreach (SyncStatus toSync in _noteDbManager.GetAllSyncStatuses())
             {
                 switch (toSync.Status)
@@ -167,6 +173,15 @@ namespace NotesFlow.Managers
                         }
                 }
             }
+        }
+
+        public async Task Synchronize()
+        {
+            System.Diagnostics.Debug.WriteLine("Entered main Sycnhronize method");
+            SynchronizeDeleted();
+            SynchronizeUpdated();
+            SynchronizeAll();
+            SynchronizeSyncStatuses();
         }
 
         public List<Note> GetNotes()

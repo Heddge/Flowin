@@ -138,11 +138,14 @@ namespace NotesFlow.Managers
             try
             {
                 var response = await _httpClient.DeleteAsync(_apiUrl + "/" + id.ToString());
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode || (int)response.StatusCode == 204 || (int)response.StatusCode == 404)
+                    return true;
+                System.Diagnostics.Debug.WriteLine("Unexpected error code. HTTP exception NotesApiManager.Delete(id).");
+                return false;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("404. HTTP exception NotesApiManager.Delete(id).");
+                System.Diagnostics.Debug.WriteLine("500+. HTTP exception NotesApiManager.Delete(id).");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return false;
             }

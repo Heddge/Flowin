@@ -517,7 +517,7 @@ a,
     border: none;
     border-radius: 8px;
     background: transparent;
-    color: white;
+    color: darkgray;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
