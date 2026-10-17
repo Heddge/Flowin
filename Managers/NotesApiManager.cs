@@ -19,8 +19,7 @@ namespace NotesFlow.Managers
         private string _apiUrl = "http://localhost:5172/api/Notes";
         public NotesApiManager(HttpClient hc)
         {
-            System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
-
+            //System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
             _httpClient = hc;
         }
 
@@ -63,7 +62,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                var response = await _httpClient.GetAsync(_apiUrl + "/" + Id.ToString().ToLower());
+                var response = await _httpClient.GetAsync(_apiUrl + "/" + Id);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
@@ -74,6 +73,9 @@ namespace NotesFlow.Managers
                 }
 
                 return new RequestResultStatus<Note?>(RequestStatus.Success, await response.Content.ReadFromJsonAsync<Note?>());
+
+
+
             }
             catch (HttpRequestException ex_request_err)
             {
@@ -155,7 +157,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync<Note>(_apiUrl + "/" + note.Id.ToString(), note);
+                var response = await _httpClient.PutAsJsonAsync<Note>(_apiUrl + "/" + note.Id, note);
 
                 if (!response.IsSuccessStatusCode)
                     return null;

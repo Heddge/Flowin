@@ -25,8 +25,8 @@ namespace NotesFlow
             System.Diagnostics.Debug.WriteLine(_dbpath);
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSingleton<NotesContainer>();
-            builder.Services.AddSingleton<JsonParserManager>();
-            builder.Services.AddSingleton<AppStorageManager>();
+            //builder.Services.AddSingleton<JsonParserManager>();
+            //builder.Services.AddSingleton<AppStorageManager>();
             builder.Services.AddSingleton<SynchronizeManager>();
             builder.Services.AddSingleton<NoteDbManager>();
             //builder.Services.AddDbContext<NoteDbContext>(options => options.UseSqlite("Data Source="+_dbpath));

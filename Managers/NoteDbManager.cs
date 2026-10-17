@@ -23,7 +23,6 @@ namespace NotesFlow.Managers
             _contextFactory = context;
         }
 
-
         // TO WORK WITH NOTES IN SQLITE
         public bool AddNote(Note n)
         {

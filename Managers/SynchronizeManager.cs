@@ -14,9 +14,6 @@ namespace NotesFlow.Managers
 
         public SynchronizeManager(NoteDbManager ndm, NotesApiManager nam)
         {
-
-            System.Diagnostics.Debug.WriteLine("constructor synchr manager entered");
-
             _noteDbManager = ndm;
             _notesApiManager = nam;
         }
@@ -38,7 +35,6 @@ namespace NotesFlow.Managers
         /// <returns></returns>
         private async Task SynchronizeUpdated()
         {
-            System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_UPDATED");
             Dictionary<Guid, DateTime>? postgrToUpd = await _notesApiManager.GetIdUpdateAt();
             List<SyncStatus> updSyncStatuses = _noteDbManager.GetUpdatedStatuses();
 
@@ -72,7 +68,6 @@ namespace NotesFlow.Managers
         /// <returns></returns>
         private async Task SynchronizeAll()
         {
-            System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_ALL");
             Dictionary<Guid, DateTime>? postgrToUpd = await _notesApiManager.GetIdUpdateAt();
             if (postgrToUpd == null)
                 return;
@@ -123,7 +118,6 @@ namespace NotesFlow.Managers
         /// <returns></returns>
         private async Task SynchronizeCreated()
         {
-            System.Diagnostics.Debug.WriteLine("SYNCRHONIZE_SYNCSTATUSES");
             foreach (SyncStatus toSync in _noteDbManager.GetCreatedStatuses())
             {
                 Note? note = _noteDbManager.GetNote(toSync.NoteId);
@@ -138,13 +132,16 @@ namespace NotesFlow.Managers
             }
         }
 
+        /// <summary>
+        /// Main app`s synchronization method
+        /// </summary>
+        /// <returns></returns>
         public async Task Synchronize()
         {
-            System.Diagnostics.Debug.WriteLine("Entered main Sycnhronize method");
-            SynchronizeDeleted();
-            SynchronizeUpdated();
-            SynchronizeAll();
-            SynchronizeCreated();
+            await SynchronizeDeleted();
+            await SynchronizeUpdated();
+            await SynchronizeAll();
+            await SynchronizeCreated();
         }
 
         public List<Note> GetNotes()
@@ -191,7 +188,7 @@ namespace NotesFlow.Managers
                 _noteDbManager.AddSyncStatus(new SyncStatus(n.Id, 3));
             else
             {
-                if (_noteDbManager.GetSyncStatus(n.Id).Status == OperationStatus.Created)
+                if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
                 {
                     _noteDbManager.DeleteSyncStatus(n.Id);
                     return true;
