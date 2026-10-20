@@ -1,0 +1,13 @@
+﻿@page "/notes"
+@inject NavigationManager Navigation
+@code {
+    private void CreateNote()
+    {
+        Navigation.NavigateTo("/note/new");
+    }
+}
+<h1>Мои заметочки</h1>
+
+<button class="btn btn-primary" @onclick="CreateNote">
+    + Новая заметка
+</button>
