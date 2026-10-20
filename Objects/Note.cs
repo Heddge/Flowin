@@ -19,8 +19,8 @@ namespace NotesFlow.Objects
             Id = id;
             Title = title;
             Content = content;
-            CreatedAt = DateTime.Now;
-            UpdatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
         public Note(string title, string content, Guid id, DateTime crAt, DateTime updAt)
         {
@@ -30,5 +30,8 @@ namespace NotesFlow.Objects
             CreatedAt = crAt;
             UpdatedAt = updAt;
         }
+
+        public override string ToString()
+            => $"ID -> {this.Id}; title -> {this.Title}";
     }
 }

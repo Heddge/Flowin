@@ -4,17 +4,24 @@
 
 @inject NotesContainer _notesContainer
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
 @code {
+    private ElementReference markdownEditorElement;
+    private string? markdownEditorId;
+    private Guid? editorNoteId;
     [Parameter]
     public Guid? id { get; set; }
 
     private bool isEditing = false;
-    private Note n { get; set; }
-
+    private Note n = new Note(Guid.Empty, "", "");
+    private List<Note> notes = new List<Note>();
 
     protected override void OnParametersSet()
     {
+        System.Diagnostics.Debug.WriteLine("onparameterset page entered");
+
         isEditing = false;
 
         if (id.HasValue && id.Value != Guid.Empty)
@@ -31,29 +38,93 @@
         id = n.Id;
     }
 
-    private void HandleSave()
+    protected override async Task OnInitializedAsync()
     {
+        await SynchronizateIt();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (markdownEditorId == null)
+        {
+            markdownEditorId = await JS.InvokeAsync<string>(
+                "blazorMarkdownEditor.create",
+                markdownEditorElement,
+                new { markdown = n.Content ?? "" });
+
+            editorNoteId = n.Id;
+            return;
+        }
+
+        if (editorNoteId != n.Id)
+        {
+            await JS.InvokeVoidAsync(
+                "blazorMarkdownEditor.setMarkdown",
+                markdownEditorId,
+                n.Content ?? "");
+
+            editorNoteId = n.Id;
+        }
+    }
+
+    private async Task HandleSave()
+    {
+
         if (n == null) return;
+
+        if (markdownEditorId != null)
+        {
+            n.Content = await JS.InvokeAsync<string>(
+                "blazorMarkdownEditor.getMarkdown",
+                markdownEditorId);
+        }
+
         if (!isEditing)
         {
-            _notesContainer.SaveNote(n.Id, n.Title, n.Content);
+            await _notesContainer.SaveNote(n.Id, n.Title, n.Content);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{n.Id}");
 
         }
         else
         {
-            _notesContainer.UpdateNote((Guid)id, n);
+            await _notesContainer.UpdateNote((Guid)id, n);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
         }
 
     }
 
-    public void Delete(Guid noteid)
+    public async ValueTask DisposeAsync()
+    {
+        if (markdownEditorId != null)
+        {
+            await JS.InvokeVoidAsync(
+                "blazorMarkdownEditor.destroy",
+                markdownEditorId);
+
+            markdownEditorId = null;
+        }
+    }
+
+    public async Task SynchronizateIt()
+    {
+        await _notesContainer.Synchronizate();
+        await _notesContainer.GetNotesAsync();
+
+        notes = _notesContainer.GetNotes();
+        if (n.Id != Guid.Empty)
+        {
+            Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
+            return;
+        }
+        Navigation.NavigateTo("/");
+    }
+
+    public async Task Delete(Guid noteid)
     {
         if (noteid == Guid.Empty) return;
-        _notesContainer.DeleteNote((Guid)noteid);
+        await _notesContainer.DeleteNote((Guid)noteid);
         id = null;
         isEditing = false;
         Navigation.NavigateTo($"/");
@@ -61,6 +132,20 @@
 }
 
 <div class="notes-layout">
+
+    <button class="sync-button"
+            @onclick="SynchronizateIt"
+            title="Синхронизировать заметки"
+            aria-label="Синхронизировать заметки">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7v5h-5" />
+            <path d="M4 17v-5h5" />
+            <path d="M5.64 9A7 7 0 0 1 17.5 6.5L20 12" />
+            <path d="M18.36 15A7 7 0 0 1 6.5 17.5L4 12" />
+        </svg>
+    </button>
 
     <!-- Сайдбар -->
     <aside class="notes-sidebar">
@@ -76,32 +161,37 @@
         </div>
 
         <div class="notes-list">
-
-            @foreach (Note note in _notesContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
+            @if (_notesContainer.GetNotes() != null)
             {
-                if (note == null) continue;
+                if (id == null) id = Guid.Empty;
+                System.Diagnostics.Debug.WriteLine("rendering page entered");
 
-                <div class="note-list-item @(n?.Id == note.Id ? "active" : "")"
-                     @onclick="@(() => Navigation.NavigateTo($"/note-editor/{(Guid)note.Id}"))">
+                foreach (Note note in _notesContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
+                {
+                    if (note == null) continue;
 
-                    <div class="note-list-icon">N</div>
+                    <div class="note-list-item @(n?.Id == note.Id ? "active" : "")"
+                         @onclick="@(() => Navigation.NavigateTo($"/note-editor/{(Guid)note.Id}"))">
 
-                    <span class="note-list-title">@note.Title</span>
+                        <div class="note-list-icon">N</div>
 
-                    <button class="note-delete-button"
-                            title="Удалить"
-                            @onclick="() => Delete((Guid)note.Id)"
-                            @onclick:stopPropagation="true">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M4 7h16" />
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
-                            <path d="M6 7l1 14h10l1-14" />
-                            <path d="M9 7V4h6v3" />
-                        </svg>
-                    </button>
+                        <span class="note-list-title">@note.Title</span>
 
-                </div>
+                        <button class="note-delete-button"
+                                title="Удалить"
+                                @onclick="() => Delete((Guid)note.Id)"
+                                @onclick:stopPropagation="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 7h16" />
+                                <path d="M10 11v6" />
+                                <path d="M14 11v6" />
+                                <path d="M6 7l1 14h10l1-14" />
+                                <path d="M9 7V4h6v3" />
+                            </svg>
+                        </button>
+
+                    </div>
+                }
             }
 
         </div>
@@ -116,9 +206,10 @@
                @bind="@n.Title"
                placeholder="Новая заметка" />
 
-        <textarea class="note-editor-content"
-                  @bind="@n.Content"
-                  placeholder="Введите ваш текст..."></textarea>
+        <div class="note-editor-content"
+             @ref="markdownEditorElement"
+             spellcheck="false">
+         </div>
 
         <div class="note-editor-actions">
 
