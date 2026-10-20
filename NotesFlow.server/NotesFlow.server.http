@@ -1,0 +1,53 @@
+@NotesFlow.server_HostAddress = http://localhost:5172
+
+GET {{NotesFlow.server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST {{NotesFlow.server_HostAddress}}/api/Notes
+Content-Type: application/json
+
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "title": "Testing API",
+  "content": "hello postgrya",
+  "createdAt": "2026-10-08T19:00:00Z",
+  "updatedAt": "2026-10-08T19:00:00Z"
+}
+###
+
+GET {{NotesFlow.server_HostAddress}}/api/Notes
+Content-Type: application/json
+
+###
+
+GET {{NotesFlow.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-Type: application/json
+
+###
+
+DELETE {{NotesFlow.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-type: application/json
+
+###
+
+PUT {{NotesFlow.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-Type: application/json
+
+{
+  "title": "yobani sir2",
+  "content": "salam"
+}
+
+###
+
+DELETE {{NotesFlow.server_HostAddress}}/api/Notes/8b5ce3d4-22bc-4fb1-a4cc-bda90ed4f048
+Content-type: application/json
+
+###
+
+
+DELETE {{NotesFlow.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-type: application/json
+
+###
