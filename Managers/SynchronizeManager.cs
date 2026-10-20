@@ -41,10 +41,11 @@ namespace NotesFlow.Managers
             if (postgrToUpd != null)
                 foreach (SyncStatus toSync in updSyncStatuses)
                 {
-                    var n = _noteDbManager.GetNote(toSync.NoteId);
-                    if (postgrToUpd.ContainsKey(toSync.NoteId) && n != null)
+                    var local_note = _noteDbManager.GetNote(toSync.NoteId);
+                    if (postgrToUpd.ContainsKey(toSync.NoteId) && local_note != null)
                     {
-                        if (n.UpdatedAt < postgrToUpd[toSync.NoteId])
+                        var pgsql_updat_note = postgrToUpd[toSync.NoteId];
+                        if (local_note.UpdatedAt < pgsql_updat_note)
                         {
                             var request = await _notesApiManager.GetNote(toSync.NoteId);
                             if (request.data != null)
@@ -53,11 +54,30 @@ namespace NotesFlow.Managers
                                 _noteDbManager.DeleteSyncStatus(toSync.NoteId);
                             }
                         }
-                        else if (n.UpdatedAt > postgrToUpd[toSync.NoteId])
+                        else if (local_note.UpdatedAt > pgsql_updat_note)
                         {
-                            if (await _notesApiManager.UpdateNote(n) != null)
+                            if (await _notesApiManager.UpdateNote(local_note) != null)
                                 _noteDbManager.DeleteSyncStatus(toSync.NoteId);
                         }
+                        else
+                        {
+                            var response = await _notesApiManager.GetNote(local_note.Id);
+                            if (local_note.Content.Length > response?.data?.Content.Length)
+                            {
+                                if (await _notesApiManager.UpdateNote(local_note) != null)
+                                    _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                            }
+                            else
+                            {
+                                var request = await _notesApiManager.GetNote(toSync.NoteId);
+                                if (request.data != null)
+                                {
+                                    _noteDbManager.UpdateNote(request.data);
+                                    _noteDbManager.DeleteSyncStatus(toSync.NoteId);
+                                }
+                            }
+                        }
+
                     }
                 }
         }
