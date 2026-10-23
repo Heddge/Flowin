@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NotesFlow.Interfaces;
 using NotesFlow.Objects;
 
 namespace NotesFlow.Managers
 {
-    public class SynchronizeManager
+    public class SynchronizeManager : ISynchronizeManager
     {
         private NoteDbManager _noteDbManager;
         private NotesApiManager _notesApiManager;
@@ -165,9 +166,7 @@ namespace NotesFlow.Managers
         }
 
         public List<Note> GetNotes()
-        {
-            return _noteDbManager.GetNotes();
-        }
+            => _noteDbManager.GetNotes();
 
         public async Task<bool> SaveNote(Note note)
         {
