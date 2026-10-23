@@ -1,13 +1,14 @@
 ﻿using NotesFlow.Managers;
+using NotesFlow.Interfaces;
 
 namespace NotesFlow.Objects
 {
     public class NotesContainer
     {
         private List<Note> notes;
-        private SynchronizeManager _synchronizeManager;
+        private ISynchronizeManager _synchronizeManager;
 
-        public NotesContainer(SynchronizeManager sm)
+        public NotesContainer(ISynchronizeManager sm)
         {
             _synchronizeManager = sm;
             notes = new List<Note>();
@@ -29,9 +30,9 @@ namespace NotesFlow.Objects
             await _synchronizeManager.SaveNote(n);
         }
 
-        public async Task UpdateNote(Guid id, Note n)
+        public async Task UpdateNote(Note n)
         {
-            int idx = notes.FindIndex(x => x.Id == id);
+            int idx = notes.FindIndex(x => x.Id == n.Id);
             if (idx == -1)
                 return;
 
@@ -47,13 +48,14 @@ namespace NotesFlow.Objects
             Note? n = notes.FirstOrDefault(x => x.Id == id);
             if (n != null)
             {
-                await _synchronizeManager.DeleteNote(n);
                 notes.Remove(n);
+                await _synchronizeManager.DeleteNote(n);
             }
         }
 
         // getters
         public List<Note> GetNotes() => notes;
+        public int GetNotesCount() => notes.Count;
         public Guid GetId() => Guid.NewGuid();
     }
 }

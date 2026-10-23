@@ -88,7 +88,7 @@
         }
         else
         {
-            await _notesContainer.UpdateNote((Guid)id, n);
+            await _notesContainer.UpdateNote(n);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
         }
