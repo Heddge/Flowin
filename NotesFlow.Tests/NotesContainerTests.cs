@@ -61,7 +61,7 @@ namespace NotesFlow.Tests
             NotesContainer nc = new NotesContainer(mock.Object);
             Note n = new Note();
             await nc.SaveNote(n.Id, n.Title, n.Content);
-            mock.Setup(x => x.SaveNote(It.Is<Note>(x => x.IsValidNote())));
+            mock.Verify(x => x.SaveNote(It.Is<Note>(x => x.IsValidNote())));
         }
 
         [Fact]
@@ -114,6 +114,14 @@ namespace NotesFlow.Tests
             await nc.UpdateNote(n);
             mock.Setup(x => x.UpdateNote(n)).ReturnsAsync(false);
             mock.Verify(x => x.UpdateNote(It.Is<Note>(x => x.IsValidNote())));
+            //or:
+            mock.Setup(x => x.UpdateNote(n)).
+                Callback<Note>(
+                note => 
+                { 
+                    Assert.True(note.IsValidNote()); 
+                }
+                );
         }
 
         [Fact]
@@ -156,6 +164,13 @@ namespace NotesFlow.Tests
             mock.Setup(x => x.DeleteNote(n)).ReturnsAsync(false);
             await nc.DeleteNote(n.Id);
             mock.Verify(x => x.DeleteNote(It.Is<Note>(x => x.IsValidNote())));
+            mock.Setup(x => x.DeleteNote(n)).
+                Callback<Note>(
+                note =>
+                {
+                    Assert.True(note.IsValidNote());
+                }
+                );
         }
 
         [Fact]
