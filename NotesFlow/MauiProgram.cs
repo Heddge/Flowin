@@ -29,10 +29,10 @@ namespace NotesFlow
             //builder.Services.AddSingleton<JsonParserManager>();
             //builder.Services.AddSingleton<AppStorageManager>();
             builder.Services.AddSingleton<ISynchronizeManager, SynchronizeManager>();
-            builder.Services.AddSingleton<NoteDbManager>();
+            builder.Services.AddSingleton<INoteDbManager, NoteDbManager>();
             //builder.Services.AddDbContext<NoteDbContext>(options => options.UseSqlite("Data Source="+_dbpath));
             builder.Services.AddPooledDbContextFactory<NoteDbContext>(options => options.UseSqlite("Data Source=" + _dbpath));
-            builder.Services.AddHttpClient<NotesApiManager>();
+            builder.Services.AddHttpClient<INotesApiManager, NotesApiManager>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

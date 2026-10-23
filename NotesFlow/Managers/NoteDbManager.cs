@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+using NotesFlow.Interfaces;
 using NotesFlow.Objects;
 
 namespace NotesFlow.Managers
@@ -13,7 +14,7 @@ namespace NotesFlow.Managers
     /// <summary>
     /// Менеджер общения NoteContainer (UI) и SQLite.
     /// </summary>
-    public class NoteDbManager
+    public class NoteDbManager : INoteDbManager
     {
         IDbContextFactory<NoteDbContext> _contextFactory;
         public NoteDbManager(IDbContextFactory<NoteDbContext> context)

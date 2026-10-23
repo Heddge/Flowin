@@ -10,10 +10,10 @@ namespace NotesFlow.Managers
 {
     public class SynchronizeManager : ISynchronizeManager
     {
-        private NoteDbManager _noteDbManager;
-        private NotesApiManager _notesApiManager;
+        private INoteDbManager _noteDbManager;
+        private INotesApiManager _notesApiManager;
 
-        public SynchronizeManager(NoteDbManager ndm, NotesApiManager nam)
+        public SynchronizeManager(INoteDbManager ndm, INotesApiManager nam)
         {
             _noteDbManager = ndm;
             _notesApiManager = nam;

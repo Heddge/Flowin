@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using NotesFlow.Objects;
 using Microsoft.AspNetCore;
 using System.Text.Json;
+using NotesFlow.Interfaces;
 
 namespace NotesFlow.Managers
 {
     /// <summary>
     /// Менеджер общения NoetContainer (UI) (временно) и PostgreSQL.
     /// </summary>
-    public class NotesApiManager
+    public class NotesApiManager : INotesApiManager
     {
         private HttpClient _httpClient;
         private string _apiUrl = "http://localhost:5172/api/Notes";
