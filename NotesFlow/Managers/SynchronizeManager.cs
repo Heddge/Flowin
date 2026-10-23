@@ -170,7 +170,6 @@ namespace NotesFlow.Managers
 
         public async Task<bool> SaveNote(Note note)
         {
-
             _noteDbManager.AddNote(note);
             _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, 1));
 

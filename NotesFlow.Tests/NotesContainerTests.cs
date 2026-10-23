@@ -43,6 +43,28 @@ namespace NotesFlow.Tests
         }
 
         [Fact]
+        public async Task SaveNoteCallsSynchronizeManager()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note to_save = new Note(Guid.NewGuid(), "hi", "hello");
+            //mock.Setup(x => x.SaveNote(It.IsAny<Note>())).ReturnsAsync(false); // можно убрать, нам не важен результат SaveNote
+            await nc.SaveNote(Guid.NewGuid(), "hi", "hello");
+            mock.Verify(x => x.SaveNote(It.IsAny<Note>()), Times.Once);
+        }
+
+
+        [Fact]
+        public async Task SaveNotePassesCorrectNoteForSycnhrManager()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note n = new Note();
+            await nc.SaveNote(n.Id, n.Title, n.Content);
+            mock.Setup(x => x.SaveNote(It.Is<Note>(x => x.IsValidNote())));
+        }
+
+        [Fact]
         public void GetNotesFromAppsCache()
         {
             Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
@@ -52,7 +74,7 @@ namespace NotesFlow.Tests
         }
 
         [Fact]
-        public async Task UpdateNoteInAppsCache()
+        public async Task UpdateNoteInAppsCacheTitleContent()
         {
             Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
             NotesContainer nc = new NotesContainer(mock.Object);
@@ -61,10 +83,52 @@ namespace NotesFlow.Tests
             mock.Setup(x => x.UpdateNote(to_update)).ReturnsAsync(false);
             await nc.SaveNote(to_update.Id, to_update.Title, to_update.Content);
             to_update.Content = "updated";
+            to_update.Title = "title too";
             await nc.UpdateNote(to_update);
             Assert.True(to_update == nc.GetNotes().FirstOrDefault());
         }
 
+        [Fact]
+        public async Task UpdateNoteInAppsCacheUpdatedAt()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note to_update = new Note(Guid.NewGuid(), "hi", "hello");
+            mock.Setup(x => x.SaveNote(to_update)).ReturnsAsync(false);
+            mock.Setup(x => x.UpdateNote(to_update)).ReturnsAsync(false);
+            await nc.SaveNote(to_update.Id, to_update.Title, to_update.Content);
+            await nc.UpdateNote(to_update);
+            Assert.True(to_update.UpdatedAt != nc.GetNotes().FirstOrDefault()?.UpdatedAt);
+        }
+
+        
+        [Fact]
+        public async Task UpdateNotePassesCorrectNoteForSycnhrManager()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note n = new Note(Guid.NewGuid(), "hi", "hello");
+            await nc.SaveNote(n.Id, n.Title, n.Content);
+            mock.Setup(x => x.SaveNote(n)).ReturnsAsync(false);
+            n.Content = "Updated";
+            await nc.UpdateNote(n);
+            mock.Setup(x => x.UpdateNote(n)).ReturnsAsync(false);
+            mock.Verify(x => x.UpdateNote(It.Is<Note>(x => x.IsValidNote())));
+        }
+
+        [Fact]
+        public async Task UpdateNoteDoesNothingForUnknownId()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note n = new Note(Guid.NewGuid(), "hi", "hello");
+            await nc.SaveNote(n.Id, n.Title, n.Content);
+            mock.Setup(x => x.SaveNote(n)).ReturnsAsync(false);
+            n.Content = "Updated";
+            n.Id = Guid.Empty;
+            await nc.UpdateNote(n);
+            mock.Verify(x => x.UpdateNote(n), Times.Never);
+        }
 
         [Fact]
         public async Task DeleteNoteFromAppsCache()
@@ -80,5 +144,31 @@ namespace NotesFlow.Tests
         }
 
 
+        [Fact]
+        public async Task DeleteNotePassesCorrectNoteForSycnhrManager()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note n = new Note(Guid.NewGuid(), "hi", "hello");
+            await nc.SaveNote(n.Id, n.Title, n.Content);
+            mock.Setup(x => x.SaveNote(n)).ReturnsAsync(false);
+            await nc.DeleteNote(n.Id);
+            mock.Setup(x => x.DeleteNote(n)).ReturnsAsync(false);
+            await nc.DeleteNote(n.Id);
+            mock.Verify(x => x.DeleteNote(It.Is<Note>(x => x.IsValidNote())));
+        }
+
+        [Fact]
+        public async Task DeleteNoteDoesNothingForUnknownId()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            Note n = new Note(Guid.NewGuid(), "hi", "hello");
+            await nc.SaveNote(n.Id, n.Title, n.Content);
+            mock.Setup(x => x.SaveNote(n)).ReturnsAsync(false);
+            n.Id = Guid.Empty;
+            await nc.DeleteNote(n.Id);
+            mock.Verify(x => x.DeleteNote(n), Times.Never);
+        }
     }
 }
