@@ -47,7 +47,7 @@ namespace NotesFlow.Objects
 
         public bool IsValidNote()
         {
-            if (!(this.Id is Guid) && this.Id == null && this.Id == Guid.Empty)
+            if (!(this.Id is Guid) || this.Id == null || this.Id == Guid.Empty)
                 return false;
             if (this.Content == null || this.Title == null)
                 return false;
