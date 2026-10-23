@@ -44,5 +44,14 @@ namespace NotesFlow.Objects
 
         public static bool operator !=(Note? left, Note? right)
             => !(left == right);
+
+        public bool IsValidNote()
+        {
+            if (!(this.Id is Guid) && this.Id == null && this.Id == Guid.Empty)
+                return false;
+            if (this.Content == null || this.Title == null)
+                return false;
+            return true;
+        }
     }
 }
