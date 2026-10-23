@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NotesFlow.Objects;
 using NotesFlow.Managers;
+using NotesFlow.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using JetBrains.Annotations;
@@ -27,7 +28,7 @@ namespace NotesFlow
             builder.Services.AddSingleton<NotesContainer>();
             //builder.Services.AddSingleton<JsonParserManager>();
             //builder.Services.AddSingleton<AppStorageManager>();
-            builder.Services.AddSingleton<SynchronizeManager>();
+            builder.Services.AddSingleton<ISynchronizeManager, SynchronizeManager>();
             builder.Services.AddSingleton<NoteDbManager>();
             //builder.Services.AddDbContext<NoteDbContext>(options => options.UseSqlite("Data Source="+_dbpath));
             builder.Services.AddPooledDbContextFactory<NoteDbContext>(options => options.UseSqlite("Data Source=" + _dbpath));
