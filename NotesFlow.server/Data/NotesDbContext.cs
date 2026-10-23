@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
 using NotesFlow.server.Objects;
 
 namespace NotesFlow.server.Data

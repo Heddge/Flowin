@@ -30,5 +30,28 @@ namespace NotesFlow.server.Objects
             CreatedAt = crAt;
             UpdatedAt = updAt;
         }
+
+        public override string ToString()
+            => $"ID -> {this.Id}; title -> {this.Title}";
+
+        public static bool operator ==(Note? left, Note? right)
+        {
+            if (left is null || right is null)
+                return left is null && right is null;
+
+            return left.Id == right.Id && left.Content == right.Content && left.Title == right.Title;
+        }
+
+        public static bool operator !=(Note? left, Note? right)
+            => !(left == right);
+
+        public bool IsValidNote()
+        {
+            if (!(this.Id is Guid) || this.Id == null || this.Id == Guid.Empty)
+                return false;
+            if (this.Content == null || this.Title == null)
+                return false;
+            return true;
+        }
     }
 }

@@ -62,11 +62,11 @@ namespace NotesFlow.server.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Note> UpdateNote(Guid id, Note n)
+        public ActionResult<Note> UpdateNote(Note n)
         {
             try
             {
-                Note? note = _notesDbContext.Notes.Find(id);
+                Note? note = _notesDbContext.Notes.Find(n.Id);
                 if (note == null) return NotFound();
 
                 note.Title = n.Title;

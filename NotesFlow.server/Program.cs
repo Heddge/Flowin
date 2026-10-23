@@ -23,9 +23,8 @@ namespace NotesFlow.server
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
-            var connect = builder.Configuration.GetConnectionString("NotesFlow");
+            var connect = builder.Configuration.GetConnectionString("NotesDatabase");
             builder.Services.AddDbContext<NotesDbContext>(s => s.UseNpgsql(connect));
-
 
 
 
