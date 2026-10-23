@@ -33,5 +33,16 @@ namespace NotesFlow.Objects
 
         public override string ToString()
             => $"ID -> {this.Id}; title -> {this.Title}";
+
+        public static bool operator ==(Note? left, Note? right)
+        {
+            if (left is null || right is null)
+                return left is null && right is null;
+
+            return left.Id == right.Id && left.Content == right.Content && left.Title == right.Title;
+        }
+
+        public static bool operator !=(Note? left, Note? right)
+            => !(left == right);
     }
 }
