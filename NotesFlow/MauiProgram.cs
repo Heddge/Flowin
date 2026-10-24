@@ -26,6 +26,7 @@ namespace NotesFlow
             System.Diagnostics.Debug.WriteLine(_dbpath);
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSingleton<NotesContainer>();
+            builder.Services.AddSingleton<SemaphoreSlim>();
             //builder.Services.AddSingleton<JsonParserManager>();
             //builder.Services.AddSingleton<AppStorageManager>();
             builder.Services.AddSingleton<ISynchronizeManager, SynchronizeManager>();

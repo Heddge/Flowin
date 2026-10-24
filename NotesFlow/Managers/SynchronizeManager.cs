@@ -12,11 +12,13 @@ namespace NotesFlow.Managers
     {
         private INoteDbManager _noteDbManager;
         private INotesApiManager _notesApiManager;
+        private SemaphoreSlim _semaphoreSlim;
 
         public SynchronizeManager(INoteDbManager ndm, INotesApiManager nam)
         {
             _noteDbManager = ndm;
             _notesApiManager = nam;
+            _semaphoreSlim = new SemaphoreSlim(1);
         }
 
         /// <summary>
@@ -159,10 +161,18 @@ namespace NotesFlow.Managers
         /// <returns></returns>
         public async Task Synchronize()
         {
-            await SynchronizeDeleted();
-            await SynchronizeUpdated();
-            await SynchronizeAll();
-            await SynchronizeCreated();
+            try
+            {
+                await _semaphoreSlim.WaitAsync();
+                await SynchronizeDeleted().ConfigureAwait(false);
+                await SynchronizeUpdated().ConfigureAwait(false);
+                await SynchronizeAll().ConfigureAwait(false);
+                await SynchronizeCreated().ConfigureAwait(false);
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         public List<Note> GetNotes()

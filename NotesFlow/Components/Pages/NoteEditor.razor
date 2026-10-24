@@ -20,8 +20,7 @@
 
     protected override void OnParametersSet()
     {
-        System.Diagnostics.Debug.WriteLine("onparameterset page entered");
-
+        // System.Diagnostics.Debug.WriteLine("onparameterset page entered");
         isEditing = false;
 
         if (id.HasValue && id.Value != Guid.Empty)
@@ -164,8 +163,7 @@
             @if (_notesContainer.GetNotes() != null)
             {
                 if (id == null) id = Guid.Empty;
-                System.Diagnostics.Debug.WriteLine("rendering page entered");
-
+                @* System.Diagnostics.Debug.WriteLine("rendering page entered"); *@
                 foreach (Note note in _notesContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
                 {
                     if (note == null) continue;
