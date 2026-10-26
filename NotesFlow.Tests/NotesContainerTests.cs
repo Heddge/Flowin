@@ -191,5 +191,14 @@ namespace NotesFlow.Tests
             await nc.DeleteNote(n.Id);
             mock.Verify(x => x.DeleteNote(n), Times.Never);
         }
+
+        [Fact]
+        public async Task SynchronizateRefreshesCacheAfterSync()
+        {
+            Mock<ISynchronizeManager> mock = new Mock<ISynchronizeManager>(MockBehavior.Loose);
+            NotesContainer nc = new NotesContainer(mock.Object);
+            await nc.Synchronizate();
+            mock.Verify(x => x.GetNotes(), Times.Once);
+        }
     }
 }
