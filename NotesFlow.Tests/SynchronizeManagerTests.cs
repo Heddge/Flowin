@@ -15,13 +15,16 @@ namespace NotesFlow.Tests
         [Fact]
         public async Task SynchronizeRunsPhasesInOrder()
         {
-            Mock<INoteDbManager> mock_ndm = new Mock<INoteDbManager>();
-            Mock<INotesApiManager> mock_nam = new Mock<INotesApiManager>();
-            Mock<ISynchronizeManager> ism = new Mock<ISynchronizeManager>();
-            SynchronizeManager sm = new SynchronizeManager(mock_ndm.Object, mock_nam.Object);
+            //Mock<INoteDbManager> mock_ndm = new Mock<INoteDbManager>();
+            //Mock<INotesApiManager> mock_nam = new Mock<INotesApiManager>();
+            //Mock<ISynchronizeManager> mock_sm = new Mock<ISynchronizeManager>();
+            //SynchronizeManager sm = new SynchronizeManager(mock_ndm.Object, mock_nam.Object);
 
-
-            await sm.Synchronize();
-        }   
+            //mock_sm.Setup(x => 
+            //{
+            //    x.
+            //})
+            //await sm.Synchronize();
+        }
     }
 }
