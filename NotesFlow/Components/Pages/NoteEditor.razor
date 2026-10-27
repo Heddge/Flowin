@@ -2,7 +2,7 @@
 @page "/note-editor/{id:guid?}"
 @page "/"
 
-@inject NotesContainer _notesContainer
+@inject LocalSessionContainer _localSessionContainer
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @implements IAsyncDisposable
@@ -25,7 +25,7 @@
 
         if (id.HasValue && id.Value != Guid.Empty)
         {
-            var foundNote = _notesContainer.GetNotes().FirstOrDefault(x => x.Id == id);
+            var foundNote = _localSessionContainer.GetNotes().FirstOrDefault(x => x.Id == id);
             if (foundNote != null)
             {
                 n = foundNote;
@@ -33,7 +33,7 @@
                 return;
             }
         }
-        n = new Note(_notesContainer.GetId(), "", "");
+        n = new Note(_localSessionContainer.GetId(), "", "");
         id = n.Id;
     }
 
@@ -80,14 +80,14 @@
 
         if (!isEditing)
         {
-            await _notesContainer.SaveNote(n.Id, n.Title, n.Content);
+            await _localSessionContainer.SaveNote(n.Id, n.Title, n.Content);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{n.Id}");
 
         }
         else
         {
-            await _notesContainer.UpdateNote(n);
+            await _localSessionContainer.UpdateNote(n);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
         }
@@ -108,10 +108,10 @@
 
     public async Task SynchronizateIt()
     {
-        await _notesContainer.Synchronizate();
-        await _notesContainer.GetNotesAsync();
+        await _localSessionContainer.Synchronizate();
+        await _localSessionContainer.GetNotesAsync();
 
-        notes = _notesContainer.GetNotes();
+        notes = _localSessionContainer.GetNotes();
         if (n.Id != Guid.Empty)
         {
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
@@ -123,7 +123,7 @@
     public async Task Delete(Guid noteid)
     {
         if (noteid == Guid.Empty) return;
-        await _notesContainer.DeleteNote((Guid)noteid);
+        await _localSessionContainer.DeleteNote((Guid)noteid);
         id = null;
         isEditing = false;
         Navigation.NavigateTo($"/");
@@ -160,11 +160,11 @@
         </div>
 
         <div class="notes-list">
-            @if (_notesContainer.GetNotes() != null)
+            @if (_localSessionContainer.GetNotes() != null)
             {
                 if (id == null) id = Guid.Empty;
                 @* System.Diagnostics.Debug.WriteLine("rendering page entered"); *@
-                foreach (Note note in _notesContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
+                foreach (Note note in _localSessionContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
                 {
                     if (note == null) continue;
 

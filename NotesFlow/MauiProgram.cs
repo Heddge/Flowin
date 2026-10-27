@@ -26,6 +26,7 @@ namespace NotesFlow
             System.Diagnostics.Debug.WriteLine(_dbpath);
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddSingleton<NotesContainer>();
+            builder.Services.AddSingleton<LocalSessionContainer>();
             builder.Services.AddSingleton<SemaphoreSlim>();
             //builder.Services.AddSingleton<JsonParserManager>();
             //builder.Services.AddSingleton<AppStorageManager>();
@@ -54,6 +55,7 @@ namespace NotesFlow
             {
                 System.Diagnostics.Debug.WriteLine("notescontainer creating");
                 var n = app.Services.GetRequiredService<NotesContainer>();
+                var l = app.Services.GetRequiredService<LocalSessionContainer>();
                 System.Diagnostics.Debug.WriteLine("notescontainer created");
 
             }

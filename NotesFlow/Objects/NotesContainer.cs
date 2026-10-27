@@ -5,8 +5,8 @@ namespace NotesFlow.Objects
 {
     public class NotesContainer
     {
-        private List<Note> notes;
-        private ISynchronizeManager _synchronizeManager;
+        protected List<Note> notes;
+        protected ISynchronizeManager _synchronizeManager;
 
         public NotesContainer(ISynchronizeManager sm)
         {
