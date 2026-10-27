@@ -17,7 +17,8 @@ namespace NotesFlow.Managers
     public class NotesApiManager : INotesApiManager
     {
         private HttpClient _httpClient;
-        private string _apiUrl = "http://localhost:5172/api/Notes";
+        private string _apiUrlNotes = "http://localhost:5172/api/Notes";
+        private string _apiUrlUsers = "http://localhost:5172/api/AspNetUsers";
         public NotesApiManager(HttpClient hc)
         {
             //System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
@@ -63,7 +64,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                var response = await _httpClient.GetAsync(_apiUrl + "/" + Id);
+                var response = await _httpClient.GetAsync(_apiUrlNotes + "/" + Id);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
@@ -108,7 +109,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Note>>(_apiUrl);
+                return await _httpClient.GetFromJsonAsync<List<Note>>(_apiUrlNotes);
             }
             catch (Exception ex)
             {
@@ -122,7 +123,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync<Note>(_apiUrl, note);
+                var response = await _httpClient.PostAsJsonAsync<Note>(_apiUrlNotes, note);
                 if (!response.IsSuccessStatusCode)
                     return null;
 
@@ -140,7 +141,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(_apiUrl + "/" + id.ToString());
+                var response = await _httpClient.DeleteAsync(_apiUrlNotes + "/" + id.ToString());
                 if (response.IsSuccessStatusCode || (int)response.StatusCode == 204 || (int)response.StatusCode == 404)
                     return true;
                 System.Diagnostics.Debug.WriteLine("Unexpected error code. HTTP exception NotesApiManager.Delete(id).");
@@ -158,7 +159,7 @@ namespace NotesFlow.Managers
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync<Note>(_apiUrl + "/" + note.Id, note);
+                var response = await _httpClient.PutAsJsonAsync<Note>(_apiUrlNotes + "/" + note.Id, note);
 
                 if (!response.IsSuccessStatusCode)
                     return null;

@@ -12,11 +12,13 @@ namespace NotesFlow.Objects
     {
         [Key]
         public Guid NoteId { get; set; }
+        public Guid OwnerId { get; set; }
         public OperationStatus Status { get; set; }
         public SyncStatus() { }
-        public SyncStatus(Guid nId, int status)
+        public SyncStatus(Guid nId, Guid oId, int status)
         {
             NoteId = nId;
+            OwnerId = oId;
             Status = (OperationStatus)status;
         }
     }

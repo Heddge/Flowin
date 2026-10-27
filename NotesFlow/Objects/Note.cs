@@ -8,6 +8,7 @@ namespace NotesFlow.Objects
 {
     public class Note
     {
+        public Guid OwnerId { get; set; }
         public Guid Id { get; set; }
         public string Title { get; set; } = "";
         public string Content { get; set; } = "";

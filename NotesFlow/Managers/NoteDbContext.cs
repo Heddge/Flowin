@@ -9,6 +9,5 @@ namespace NotesFlow.Managers
         public DbSet<SyncStatus> SyncStatuses { get; set; }
 
         public NoteDbContext(DbContextOptions<NoteDbContext> options) : base(options) { }
-        
     }
 }

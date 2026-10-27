@@ -28,7 +28,6 @@ namespace NotesFlow.server
 
 
 
-
             var app = builder.Build();
 
             // test connecting to PostgreSQL and EFCore 

@@ -20,7 +20,6 @@ namespace NotesFlow.Managers
         public NoteDbManager(IDbContextFactory<NoteDbContext> context)
         {
             System.Diagnostics.Debug.WriteLine("notesdbmaanager constructor entered");
-
             _contextFactory = context;
         }
 

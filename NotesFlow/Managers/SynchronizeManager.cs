@@ -181,7 +181,7 @@ namespace NotesFlow.Managers
         public async Task<bool> SaveNote(Note note)
         {
             _noteDbManager.AddNote(note);
-            _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, 1));
+            _noteDbManager.AddSyncStatus(new SyncStatus(note.Id,Guid.Empty, 1));
 
             if (await _notesApiManager.SaveNote(note) != null)
             {
@@ -196,7 +196,7 @@ namespace NotesFlow.Managers
         {
             _noteDbManager.UpdateNote(note);
             if (!_noteDbManager.IsThereAnyStatus(note.Id))
-                _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, 2));
+                _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, Guid.Empty, 2));
 
 
             if (await _notesApiManager.UpdateNote(note) != null)
@@ -213,7 +213,7 @@ namespace NotesFlow.Managers
             _noteDbManager.DeleteNote(n);
 
             if (!_noteDbManager.IsThereAnyStatus(n.Id))
-                _noteDbManager.AddSyncStatus(new SyncStatus(n.Id, 3));
+                _noteDbManager.AddSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
             else
             {
                 if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
@@ -222,7 +222,7 @@ namespace NotesFlow.Managers
                     return true;
                 }
                 else
-                    _noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, 3));
+                    _noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
             }
 
             if (await _notesApiManager.DeleteNote(n.Id))
