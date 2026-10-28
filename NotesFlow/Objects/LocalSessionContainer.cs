@@ -9,17 +9,15 @@ namespace NotesFlow.Objects
 {
     public class LocalSessionContainer : NotesContainer
     {
+        public User CurrentUser { get; set; }
         private Guid _userId { get; set; }
-        private string _name { get; set; } = "";
-        private string _surname { get; set; } = "";
-        private string _email { get; set; }
 
         public LocalSessionContainer(ISynchronizeManager sm) : base(sm)
         {
-            _userId = Guid.NewGuid();
-            _name = "";
-            _surname = "";
-            _email = "";
+            CurrentUser = new User("Egor", "Test");
+            CurrentUser.Email = "egor@test.ru";
+            CurrentUser.UserName = "egorTest";
+            _userId = CurrentUser.Id;
         }
 
         public Guid GetUserId() => _userId;
