@@ -44,6 +44,7 @@ namespace Flowin.server
             //var context = app.Services.CreateScope();
             //using var fact = context.ServiceProvider.GetRequiredService<NotesDbContext>();
             //using var fact2 = context.ServiceProvider.GetRequiredService<UserManager<User>>();
+
             using (var scope = app.Services.CreateScope())
             {
                 var fact = scope.ServiceProvider.GetRequiredService<NotesDbContext>();

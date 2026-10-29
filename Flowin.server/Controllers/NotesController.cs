@@ -108,7 +108,7 @@ namespace Flowin.server.Controllers
             }
         }
 
-        [HttpPost("AspNetUsers/")]
+        [HttpPost("AspNetUsers/Register")]
         public async Task<ActionResult<User?>?> CreateUserPOST([FromBody] RegisterRequest rr)
         {
             try
@@ -133,5 +133,33 @@ namespace Flowin.server.Controllers
                 return StatusCode(503);
             }
         }
+
+        [HttpPost("AspNetUsers/Login")]
+        public async Task<ActionResult<User?>?> GetUserPOST([FromBody] LoginRequest lr)
+        {
+            try
+            {
+                if (lr == null) return NotFound();
+                System.Diagnostics.Debug.WriteLine(lr.Email + " DIAGNOS");
+
+                var user = await _userManager.FindByEmailAsync(lr.Email);
+                System.Diagnostics.Debug.WriteLine(user?.Email + " DIAGNOS");
+
+                if (user == null)
+                    return Unauthorized();
+
+                var response = await _userManager.CheckPasswordAsync(user, lr.Password);
+                if (response)
+                    return Ok(user);
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return StatusCode(503);
+            }
+        }
+
     }
 }

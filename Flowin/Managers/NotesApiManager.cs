@@ -182,10 +182,26 @@ namespace Flowin.Managers
         public async Task<RequestResultStatus<User>?> CreateUser(User new_us, string p)
         {
             RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p);
-            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers, rr);
+            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers+"/Register", rr);
             if (!resp.IsSuccessStatusCode)
                 return new RequestResultStatus<User>(RequestStatus.NotFound, new_us);
             return new RequestResultStatus<User>(RequestStatus.Success, new_us);
+        }
+
+        public async Task<RequestResultStatus<User?>> Login(string email, string password)
+        {
+            LoginRequest lr = new LoginRequest(email, password);
+            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers+"/Login", lr);
+            if (resp.IsSuccessStatusCode)
+            {
+                var content = await resp.Content.ReadFromJsonAsync<User>();
+                if (content != null)
+                    return new RequestResultStatus<User?>(RequestStatus.Success, content);
+
+                return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
+            }
+
+            return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
         }
     }
 }

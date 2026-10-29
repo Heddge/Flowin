@@ -4,25 +4,18 @@
 @inject AuthenticationManager authManager
 
 @code {
-
     string name = "";
     string surname = "";
     string email = "";
     string password = "";
     string second_password = "";
 
-    private void Registration()
-    {
-        authManager.Registration(name, surname, email, password, second_password);
-        // Позже здесь будет регистрация через API.
-    }
+    private async Task Registration()
+        => await authManager.Registration(name, surname, email, password, second_password);
 
     private void GoToLogin()
-    {
-        Navigation.NavigateTo("/login");
-    }
+        => Navigation.NavigateTo("/login");
 }
-
 
 <div class="auth-page">
     <section class="auth-card">

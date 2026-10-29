@@ -57,5 +57,14 @@ namespace Flowin.Interfaces
         /// <returns>identityResult</returns>
         Task<RequestResultStatus<User>?> CreateUser(User new_us, string p);
 
+        /// <summary>
+        /// Logining into App by checking user`s email and password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns>RequestResultStatus</returns>
+        Task<RequestResultStatus<User?>> Login(string email, string password);
+
+
     }
 }

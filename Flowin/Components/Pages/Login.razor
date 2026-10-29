@@ -1,6 +1,25 @@
 ﻿@page "/login"
 
+@inject AuthenticationManager _authenticationManager
 @inject NavigationManager Navigation
+
+@code {
+    string email = "";
+    string password = "";
+
+    private async Task Logining()
+    {
+        var response = await _authenticationManager.Logining(email, password);
+        if (response != null)
+        {
+            System.Diagnostics.Debug.WriteLine(response.Name + " LOGGINED");
+            Navigation.NavigateTo("/note/new");
+        }
+    }
+
+    private void GoToRegister()
+        => Navigation.NavigateTo("/register");
+}
 
 <div class="auth-page">
     <section class="auth-card">
@@ -9,18 +28,19 @@
 
         <h1 class="auth-title">С возвращением</h1>
         <p class="auth-subtitle">
-            Войди в Flowin, чтобы продолжить работу с заметками.
+            Войди во Flowin, чтобы продолжить работу с заметками.
         </p>
 
         <div class="auth-form">
 
             <div class="auth-field">
-                <label for="login-email">Email или имя пользователя</label>
+                <label for="login-email">Email</label>
                 <input id="login-email"
                        class="auth-input"
                        type="text"
                        placeholder="Введите email или логин"
-                       autocomplete="username" />
+                       autocomplete="username"
+                       @bind="@email" />
             </div>
 
             <div class="auth-field">
@@ -29,7 +49,8 @@
                        class="auth-input"
                        type="password"
                        placeholder="Введите пароль"
-                       autocomplete="current-password" />
+                       autocomplete="current-password"
+                       @bind="@password" />
             </div>
 
             <button class="auth-submit" @onclick="Logining">
@@ -49,14 +70,4 @@
     </section>
 </div>
 
-@code {
-    private void Logining()
-    {
-        // Позже здесь будет авторизация через API.
-    }
 
-    private void GoToRegister()
-    {
-        Navigation.NavigateTo("/register");
-    }
-}
