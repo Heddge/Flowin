@@ -1,6 +1,6 @@
-# NotesFlow
+# Flowin
 
-NotesFlow is a cross-platform note-taking application with offline-first storage and synchronization between devices.
+Flowin is a cross-platform note-taking application with offline-first storage and synchronization between devices.
 
 The application combines local SQLite storage with a remote PostgreSQL database and provides synchronization through a REST API.
 
