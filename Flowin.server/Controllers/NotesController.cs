@@ -4,6 +4,7 @@ using Flowin.server.Data;
 using Flowin.server.Objects;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using Flowin.contracts;
 
 namespace Flowin.server.Controllers
 {
@@ -108,21 +109,29 @@ namespace Flowin.server.Controllers
         }
 
         [HttpPost("AspNetUsers/")]
-        public async Task<ActionResult<User?>> CreateUserPOST(User new_us)
+        public async Task<ActionResult<User?>?> CreateUserPOST([FromBody] RegisterRequest rr)
         {
             try
             {
-                _notesDbContext.Users.Add(new_us);
-                var resp = await _userManager.CreateAsync(new_us);
+                if (rr == null) return NotFound();
+                User us = new User(rr.Name, rr.Surname, rr.Email);
+                var resp = await _userManager.CreateAsync(us, rr.Password);
+                //добавить проверку наличия ошибок. если их нет - savechanges.
 
-                return _notesDbContext.SaveChanges() == 1 ? null : new_us;
+                if (!resp.Succeeded)
+                {
+                    foreach (var error in resp.Errors)
+                        System.Diagnostics.Debug.WriteLine($"{error.Code}: {error.Description}");
+
+                    return NotFound();
+                }
+                return _notesDbContext.SaveChanges() == 1 ? Ok() : StatusCode(500, "Server Error");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-                return NotFound();
+                return StatusCode(503);
             }
         }
-
     }
 }

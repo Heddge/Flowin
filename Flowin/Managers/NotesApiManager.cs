@@ -10,6 +10,7 @@ using System.Text.Json;
 using Flowin.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Flowin.contracts;
 
 namespace Flowin.Managers
 {
@@ -180,13 +181,10 @@ namespace Flowin.Managers
 
         public async Task<RequestResultStatus<User>?> CreateUser(User new_us, string p)
         {
-            new_us.Password = p;
-            var resp = await _httpClient.PostAsJsonAsync<User>(_apiUrlUsers, new_us);
+            RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p);
+            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers, rr);
             if (!resp.IsSuccessStatusCode)
-            {
-                return null;
-            }
-
+                return new RequestResultStatus<User>(RequestStatus.NotFound, new_us);
             return new RequestResultStatus<User>(RequestStatus.Success, new_us);
         }
     }

@@ -13,9 +13,8 @@ namespace Flowin.Objects
 
         public LocalSessionContainer(ISynchronizeManager sm) : base(sm)
         {
-            CurrentUser = new User("Egor", "Test");
+            CurrentUser = new User("Egor", "Test", "egorik@test.ru");
             CurrentUser.Email = "egor@test.ru";
-            CurrentUser.UserName = "egorTest";
         }
         public User GetUser() => CurrentUser;
     }

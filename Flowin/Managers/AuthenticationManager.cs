@@ -1,5 +1,6 @@
 ﻿using Flowin.Objects;
 using Flowin.Interfaces;
+using Flowin.contracts;
 
 namespace Flowin.Managers
 {
@@ -11,7 +12,7 @@ namespace Flowin.Managers
             notesApiManager = inam;
         }
 
-        public void Registration(string name, string surname, 
+        public async Task Registration(string name, string surname, 
             string email, string password, string second_password)
         {
             if (string.IsNullOrEmpty(name) ||
@@ -23,14 +24,13 @@ namespace Flowin.Managers
 
             if (password != second_password) return;
 
-            if (!email.Contains('@') && !email.Contains('.'))
+            if (!email.Contains('@') || !email.Contains('.'))
                 return;
 
-            User new_user = new User(name, surname);
+            User new_user = new User(name, surname, email);
             new_user.Email = email;
-            new_user.UserName = email + "us";
 
-            notesApiManager.CreateUser(new_user, password);
+            await notesApiManager.CreateUser(new_user, password);
         }
     }
 }
