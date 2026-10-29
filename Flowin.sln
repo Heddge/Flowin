@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flowin.Tests", "Flowin.Test
 		{684714B1-33B8-4D64-BBDF-B9196303F730} = {684714B1-33B8-4D64-BBDF-B9196303F730}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flowin.contracts", "Flowin.contracts\Flowin.contracts.csproj", "{78F9F466-526A-4B5B-8825-E4BC4D05292F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{8389F402-F5F2-4CB4-B269-A4C2D088325C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8389F402-F5F2-4CB4-B269-A4C2D088325C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8389F402-F5F2-4CB4-B269-A4C2D088325C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78F9F466-526A-4B5B-8825-E4BC4D05292F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78F9F466-526A-4B5B-8825-E4BC4D05292F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78F9F466-526A-4B5B-8825-E4BC4D05292F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78F9F466-526A-4B5B-8825-E4BC4D05292F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
