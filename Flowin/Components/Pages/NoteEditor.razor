@@ -67,6 +67,19 @@
         }
     }
 
+    private bool showUserMenu = false;
+
+    private void ToggleUserMenu()
+    {
+        showUserMenu = !showUserMenu;
+    }
+
+    private void Logout()
+    {
+        showUserMenu = false;
+        Navigation.NavigateTo("/login");
+    }
+
     private async Task HandleSave()
     {
 
@@ -192,6 +205,46 @@
                     </div>
                 }
             }
+
+        </div>
+
+        <div class="sidebar-account">
+
+            @if (showUserMenu)
+            {
+                <div class="account-menu">
+                    <button class="account-logout-button"
+                            @onclick="Logout">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10 17l5-5-5-5" />
+                            <path d="M15 12H3" />
+                            <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" />
+                        </svg>
+                        Выйти
+                    </button>
+                </div>
+            }
+
+            <button class="account-profile"
+                    @onclick="ToggleUserMenu"
+                    aria-expanded="@showUserMenu">
+
+                <span class="account-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21a8 8 0 0 1 16 0" />
+                    </svg>
+                </span>
+
+                <span class="account-name">
+                    @_localSessionContainer.CurrentUser.Name
+                </span>
+
+                <span class="account-chevron">
+                    @(showUserMenu ? "⌄" : "⌃")
+                </span>
+
+            </button>
 
         </div>
 

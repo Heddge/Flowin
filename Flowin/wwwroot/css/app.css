@@ -741,3 +741,286 @@ a,
     .note-editor-content .slash-menu p {
         color: #a0a0a0;
     }
+
+
+/* =========================================================
+   Flowin — Authentication Pages
+   ========================================================= */
+
+.page:has(.auth-page) .sidebar,
+.page:has(.auth-page) .top-row {
+    display: none;
+}
+
+.page:has(.auth-page) main {
+    margin-left: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+}
+
+.auth-page {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 24px;
+    overflow-y: auto;
+    background: #171717;
+    color: #e5e5e5;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+    padding: 36px;
+    border: 1px solid #303030;
+    border-radius: 18px;
+    background: #202020;
+}
+
+.auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 26px;
+    border-radius: 12px;
+    background: #292929;
+    color: #c5a4f5;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.auth-title {
+    margin: 0 0 8px;
+    color: #f0f0f0;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.auth-subtitle {
+    margin: 0 0 28px;
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .auth-field label {
+        color: #bdbdbd;
+        font-size: 14px;
+    }
+
+.auth-input {
+    width: 100%;
+    min-height: 46px;
+    box-sizing: border-box;
+    padding: 0 14px;
+    border: 1px solid #3a3a3a;
+    border-radius: 10px;
+    outline: none;
+    background: #292929;
+    color: #fff;
+    font: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+    .auth-input::placeholder {
+        color: #777;
+    }
+
+    .auth-input:focus {
+        border-color: #9064c8;
+        background: #2d2d2d;
+        box-shadow: 0 0 0 2px rgb(104 70 155 / 20%);
+    }
+
+.auth-submit {
+    width: 100%;
+    min-height: 46px;
+    margin-top: 8px;
+    border: 1px solid #68469b;
+    border-radius: 10px;
+    background: #68469b;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+    .auth-submit:hover {
+        background: #7954ad;
+    }
+
+    .auth-submit:active {
+        transform: scale(0.98);
+    }
+
+.auth-footer {
+    margin: 24px 0 0;
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.auth-link {
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: #b99be8;
+    font: inherit;
+    cursor: pointer;
+}
+
+    .auth-link:hover {
+        color: #d0b8f5;
+        text-decoration: underline;
+    }
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 26px 20px;
+    }
+
+    .auth-title {
+        font-size: 26px;
+    }
+}
+
+
+/* =========================================================
+   Sidebar Account
+   ========================================================= */
+
+.notes-sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-account {
+    position: relative;
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.account-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 64px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 14px;
+    background: #292929;
+    color: #d0d0d0;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+    .account-profile:hover {
+        background: #303030;
+    }
+
+.account-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #252525;
+    color: #b99be8;
+}
+
+    .account-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.account-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    color: #d0d0d0;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-chevron {
+    color: #888;
+    font-size: 18px;
+}
+
+.account-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% - 10px);
+    left: 0;
+    padding: 6px;
+    border: 1px solid #383838;
+    border-radius: 12px;
+    background: #242424;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 30%);
+}
+
+.account-logout-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #d0d0d0;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+    .account-logout-button:hover {
+        background: #303030;
+        color: #fff;
+    }
+
+    .account-logout-button svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+

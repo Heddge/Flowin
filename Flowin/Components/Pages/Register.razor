@@ -1,0 +1,91 @@
+﻿@page "/register"
+
+@inject NavigationManager Navigation
+
+<div class="auth-page">
+    <section class="auth-card">
+
+        <div class="auth-logo">N</div>
+
+        <h1 class="auth-title">Создать аккаунт</h1>
+        <p class="auth-subtitle">
+            Зарегистрируйся в Flowin и храни свои идеи в одном месте.
+        </p>
+
+        <div class="auth-form">
+
+            <div class="auth-field">
+                <label for="register-name">Имя</label>
+                <input id="register-name"
+                       class="auth-input"
+                       type="text"
+                       placeholder="Введите имя"
+                       autocomplete="given-name" />
+            </div>
+
+            <div class="auth-field">
+                <label for="register-surname">Фамилия</label>
+                <input id="register-surname"
+                       class="auth-input"
+                       type="text"
+                       placeholder="Введите фамилию"
+                       autocomplete="family-name" />
+            </div>
+
+            <div class="auth-field">
+                <label for="register-email">Email</label>
+                <input id="register-email"
+                       class="auth-input"
+                       type="email"
+                       placeholder="Введите email"
+                       autocomplete="email" />
+            </div>
+
+            <div class="auth-field">
+                <label for="register-password">Пароль</label>
+                <input id="register-password"
+                       class="auth-input"
+                       type="password"
+                       placeholder="Придумайте пароль"
+                       autocomplete="new-password" />
+            </div>
+
+            <div class="auth-field">
+                <label for="register-confirm-password">
+                    Подтверждение пароля
+                </label>
+                <input id="register-confirm-password"
+                       class="auth-input"
+                       type="password"
+                       placeholder="Повторите пароль"
+                       autocomplete="new-password" />
+            </div>
+
+            <button class="auth-submit" @onclick="Register">
+                Зарегистрироваться
+            </button>
+
+        </div>
+
+        <p class="auth-footer">
+            Уже есть аккаунт?
+            <button class="auth-link"
+                    @onclick="GoToLogin">
+                Войти
+            </button>
+        </p>
+
+    </section>
+</div>
+
+@code {
+    private void Register()
+    {
+        // Позже здесь будет регистрация через API.
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}
