@@ -7,6 +7,7 @@ using Microsoft.Data.Sqlite;
 using JetBrains.Annotations;
 using System.Diagnostics;
 using Microsoft.Extensions.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace Flowin
 {
@@ -35,6 +36,7 @@ namespace Flowin
             //builder.Services.AddDbContext<NoteDbContext>(options => options.UseSqlite("Data Source="+_dbpath));
             builder.Services.AddPooledDbContextFactory<NoteDbContext>(options => options.UseSqlite("Data Source=" + _dbpath));
             builder.Services.AddHttpClient<INotesApiManager, NotesApiManager>();
+            builder.Services.AddSingleton<AuthenticationManager>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
@@ -56,6 +58,7 @@ namespace Flowin
                 System.Diagnostics.Debug.WriteLine("notescontainer creating");
                 var n = app.Services.GetRequiredService<NotesContainer>();
                 var l = app.Services.GetRequiredService<LocalSessionContainer>();
+                var ls = app.Services.GetRequiredService<AuthenticationManager>();
                 System.Diagnostics.Debug.WriteLine("notescontainer created");
 
             }

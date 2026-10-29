@@ -9,6 +9,7 @@ using Microsoft.AspNetCore;
 using System.Text.Json;
 using Flowin.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Flowin.Managers
 {
@@ -17,6 +18,7 @@ namespace Flowin.Managers
     /// </summary>
     public class NotesApiManager : INotesApiManager
     {
+        //private UserManager<User> _userManager;UserManager<User> userManager
         private HttpClient _httpClient;
         private string _apiUrlNotes = "http://localhost:5172/api/Notes";
         private string _apiUrlUsers = "http://localhost:5172/api/AspNetUsers";
@@ -24,6 +26,7 @@ namespace Flowin.Managers
         {
             //System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
             _httpClient = hc;
+            //_userManager = userManager;
         }
 
         public async Task<Dictionary<Guid, DateTime>?> GetIdUpdateAt()
@@ -175,10 +178,16 @@ namespace Flowin.Managers
             }
         }
 
-        //public async Task<User?> GetUser()
-        //{
-        //    var a = new UserManager<User>();
-        //    a
-        //}
+        public async Task<RequestResultStatus<User>?> CreateUser(User new_us, string p)
+        {
+            new_us.Password = p;
+            var resp = await _httpClient.PostAsJsonAsync<User>(_apiUrlUsers, new_us);
+            if (!resp.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return new RequestResultStatus<User>(RequestStatus.Success, new_us);
+        }
     }
 }

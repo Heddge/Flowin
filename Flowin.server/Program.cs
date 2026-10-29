@@ -23,15 +23,35 @@ namespace Flowin.server
             builder.Services.AddDbContext<NotesDbContext>(s => s.UseNpgsql(connect));
             builder.Services.AddIdentityCore<User>().AddEntityFrameworkStores<NotesDbContext>();//указание Identity хранить пользователей через EFcore DB context для PostgreSQL
 
-
-
             var app = builder.Build();
 
             // test connecting to PostgreSQL and EFCore 
             //Note n = new Note(Guid.NewGuid(), "hellllll", "lmao");
-            var context = app.Services.CreateScope();
-            using var fact = context.ServiceProvider.GetRequiredService<NotesDbContext>();
-            using var fact2 = context.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+
+            //var context = app.Services.CreateScope();
+            //using var fact = context.ServiceProvider.GetRequiredService<NotesDbContext>();
+            //using var fact2 = context.ServiceProvider.GetRequiredService<UserManager<User>>();
+            using (var scope = app.Services.CreateScope())
+            {
+                var fact = scope.ServiceProvider.GetRequiredService<NotesDbContext>();
+                var fact2 = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                try
+                {
+                    fact.Database.EnsureCreated();
+                }
+                catch (SocketException exsocket)
+                {
+                    System.Diagnostics.Debug.WriteLine("404 Postgres Connetion Error. .Database.EnsureCreated()");
+                    System.Diagnostics.Debug.WriteLine(exsocket.Message);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("404 Postgres Connetion Error. .Database.EnsureCreated()");
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
+            }
 
             //User us = new User("Egor", "Test");
             //us.Email = "egor@test.ru";
@@ -44,20 +64,7 @@ namespace Flowin.server
             //var a = await fact2.FindByEmailAsync("egor@test.ru");
             //System.Diagnostics.Debug.WriteLine("FINDED PERSON BY EMAIL -> " + a?.Name + "213");
 
-            try
-            {
-                fact.Database.EnsureCreated();
-            }
-            catch (SocketException exsocket)
-            {
-                System.Diagnostics.Debug.WriteLine("404 Postgres Connetion Error. .Database.EnsureCreated()");
-                System.Diagnostics.Debug.WriteLine(exsocket.Message);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("404 Postgres Connetion Error. .Database.EnsureCreated()");
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
+            
             //fact.Notes.Add(n);
             //fact.SaveChanges();
 

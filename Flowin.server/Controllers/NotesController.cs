@@ -2,20 +2,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Flowin.server.Data;
 using Flowin.server.Objects;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace Flowin.server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/")]
     public class NotesController : ControllerBase
     {
         private NotesDbContext _notesDbContext;
-        public NotesController(NotesDbContext ndc)
+        private readonly UserManager<User> _userManager;
+        public NotesController(NotesDbContext ndc, UserManager<User> um)
         {
             _notesDbContext = ndc;
+            _userManager = um;
         }
 
-        [HttpPost]
+        [HttpPost("Notes/")]
         public ActionResult<Note> AddNotePOST(Note n)
         {
             _notesDbContext.Notes.Add(n);
@@ -30,7 +34,7 @@ namespace Flowin.server.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("Notes/")]
         public List<Note> GetNotes()
         {
             try
@@ -44,7 +48,7 @@ namespace Flowin.server.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("Notes/{id}")]
         public ActionResult<Note> GetNote(Guid id)
         {
             try
@@ -61,7 +65,7 @@ namespace Flowin.server.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Notes/{id}")]
         public ActionResult<Note> UpdateNote(Note n)
         {
             try
@@ -84,7 +88,7 @@ namespace Flowin.server.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Notes/{id}")]
         public ActionResult DeleteNoteDELETE(Guid id)
         {
             try
@@ -100,6 +104,23 @@ namespace Flowin.server.Controllers
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return StatusCode(503);
+            }
+        }
+
+        [HttpPost("AspNetUsers/")]
+        public async Task<ActionResult<User?>> CreateUserPOST(User new_us)
+        {
+            try
+            {
+                _notesDbContext.Users.Add(new_us);
+                var resp = await _userManager.CreateAsync(new_us);
+
+                return _notesDbContext.SaveChanges() == 1 ? null : new_us;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return NotFound();
             }
         }
 

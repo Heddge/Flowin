@@ -1,6 +1,28 @@
 ﻿@page "/register"
 
 @inject NavigationManager Navigation
+@inject AuthenticationManager authManager
+
+@code {
+
+    string name = "";
+    string surname = "";
+    string email = "";
+    string password = "";
+    string second_password = "";
+
+    private void Registration()
+    {
+        authManager.Registration(name, surname, email, password, second_password);
+        // Позже здесь будет регистрация через API.
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}
+
 
 <div class="auth-page">
     <section class="auth-card">
@@ -20,7 +42,8 @@
                        class="auth-input"
                        type="text"
                        placeholder="Введите имя"
-                       autocomplete="given-name" />
+                       autocomplete="given-name"
+                       @bind="@name"/>
             </div>
 
             <div class="auth-field">
@@ -29,7 +52,8 @@
                        class="auth-input"
                        type="text"
                        placeholder="Введите фамилию"
-                       autocomplete="family-name" />
+                       autocomplete="family-name" 
+                       @bind="@surname" />
             </div>
 
             <div class="auth-field">
@@ -38,7 +62,8 @@
                        class="auth-input"
                        type="email"
                        placeholder="Введите email"
-                       autocomplete="email" />
+                       autocomplete="email" 
+                       @bind="@email" />
             </div>
 
             <div class="auth-field">
@@ -47,7 +72,8 @@
                        class="auth-input"
                        type="password"
                        placeholder="Придумайте пароль"
-                       autocomplete="new-password" />
+                       autocomplete="new-password" 
+                       @bind="@password" />
             </div>
 
             <div class="auth-field">
@@ -58,7 +84,8 @@
                        class="auth-input"
                        type="password"
                        placeholder="Повторите пароль"
-                       autocomplete="new-password" />
+                       autocomplete="new-password" 
+                       @bind="@second_password" />
             </div>
 
             <button class="auth-submit" @onclick="Registration">
@@ -78,14 +105,3 @@
     </section>
 </div>
 
-@code {
-    private void Registration()
-    {
-        // Позже здесь будет регистрация через API.
-    }
-
-    private void GoToLogin()
-    {
-        Navigation.NavigateTo("/login");
-    }
-}

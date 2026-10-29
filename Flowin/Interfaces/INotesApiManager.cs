@@ -1,5 +1,6 @@
 ﻿using Flowin.Managers;
 using Flowin.Objects;
+using Microsoft.AspNetCore.Identity;
 
 namespace Flowin.Interfaces
 {
@@ -47,5 +48,14 @@ namespace Flowin.Interfaces
         /// <param name="note">Note that needs to update</param>
         /// <returns>IsUpdated?</returns>
         Task<Note?> UpdateNote(Note note);
+
+        /// <summary>
+        /// Creating new User in server`s DB using password p.
+        /// </summary>
+        /// <param name="new_us"></param>
+        /// <param name="p"></param>
+        /// <returns>identityResult</returns>
+        Task<RequestResultStatus<User>?> CreateUser(User new_us, string p);
+
     }
 }
