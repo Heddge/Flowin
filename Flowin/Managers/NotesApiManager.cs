@@ -8,6 +8,7 @@ using Flowin.Objects;
 using Microsoft.AspNetCore;
 using System.Text.Json;
 using Flowin.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Flowin.Managers
 {
@@ -173,5 +174,11 @@ namespace Flowin.Managers
                 return null;
             }
         }
+
+        //public async Task<User?> GetUser()
+        //{
+        //    var a = new UserManager<User>();
+        //    a
+        //}
     }
 }

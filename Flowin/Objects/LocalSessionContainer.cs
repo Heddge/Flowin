@@ -10,17 +10,13 @@ namespace Flowin.Objects
     public class LocalSessionContainer : NotesContainer
     {
         public User CurrentUser { get; set; }
-        private Guid _userId { get; set; }
 
         public LocalSessionContainer(ISynchronizeManager sm) : base(sm)
         {
             CurrentUser = new User("Egor", "Test");
             CurrentUser.Email = "egor@test.ru";
             CurrentUser.UserName = "egorTest";
-            _userId = CurrentUser.Id;
         }
-
-        public Guid GetUserId() => _userId;
-
+        public User GetUser() => CurrentUser;
     }
 }

@@ -1,5 +1,4 @@
-﻿
-@page "/login"
+﻿@page "/login"
 
 @inject NavigationManager Navigation
 
@@ -33,7 +32,7 @@
                        autocomplete="current-password" />
             </div>
 
-            <button class="auth-submit" @onclick="Login">
+            <button class="auth-submit" @onclick="Logining">
                 Войти
             </button>
 
@@ -51,7 +50,7 @@
 </div>
 
 @code {
-    private void Login()
+    private void Logining()
     {
         // Позже здесь будет авторизация через API.
     }
