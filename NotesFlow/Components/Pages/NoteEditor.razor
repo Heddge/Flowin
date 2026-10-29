@@ -14,7 +14,7 @@
     [Parameter]
     public Guid? id { get; set; }
 
-    User currUser = _localSessionContainer.CurrentUser;
+    // User currUser = _localSessionContainer.CurrentUser;
     private bool isEditing = false;
     private Note n = new Note(Guid.Empty, "", "");
     private List<Note> notes = new List<Note>();
