@@ -1,0 +1,68 @@
+@Flowin.server_HostAddress = http://localhost:5172
+
+GET {{Flowin.server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST {{Flowin.server_HostAddress}}/api/Notes
+Content-Type: application/json
+
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "OwnerId": "00000000-0000-0000-0000-000000000000",
+  "title": "Testing API",
+  "content": "hello postgrya",
+  "createdAt": "2026-10-08T19:00:00Z",
+  "updatedAt": "2026-10-08T19:00:00Z"
+}
+###
+
+POST {{Flowin.server_HostAddress}}/api/AspNetUsers
+Content-Type: application/json
+
+{
+  "Id": "00000000-0000-0000-0000-000000000000",
+  "Name": "Testing",
+  "Surname": "API",
+  "CreatedAt": "2026-10-08T19:00:00Z",
+  "UserName": "heddge",
+  "Email": "egor@test.ru"
+}
+###
+
+
+GET {{Flowin.server_HostAddress}}/api/Notes
+Content-Type: application/json
+
+###
+
+GET {{Flowin.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-Type: application/json
+
+###
+
+DELETE {{Flowin.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-type: application/json
+
+###
+
+PUT {{Flowin.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-Type: application/json
+
+{
+  "title": "yobani sir2",
+  "content": "salam"
+}
+
+###
+
+DELETE {{Flowin.server_HostAddress}}/api/Notes/8b5ce3d4-22bc-4fb1-a4cc-bda90ed4f048
+Content-type: application/json
+
+###
+
+
+DELETE {{Flowin.server_HostAddress}}/api/Notes/11111111-1111-1111-1111-111111111111
+Content-type: application/json
+
+###

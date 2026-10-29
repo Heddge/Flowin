@@ -1,0 +1,743 @@
+﻿html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+
+/* =========================================================
+   Standard Blazor styles
+   ========================================================= */
+
+h1:focus {
+    outline: none;
+}
+
+a,
+.btn-link {
+    color: #006bb7;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid #e50000;
+}
+
+.validation-message {
+    color: #e50000;
+}
+
+
+/* =========================================================
+   Blazor error
+   ========================================================= */
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+
+/* =========================================================
+   iOS safe area
+   ========================================================= */
+
+.status-bar-safe-area {
+    display: none;
+}
+
+@supports (-webkit-touch-callout: none) {
+    .status-bar-safe-area {
+        display: flex;
+        position: sticky;
+        top: 0;
+        height: env(safe-area-inset-top);
+        background-color: #171717;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .flex-column,
+    .navbar-brand {
+        padding-left: env(safe-area-inset-left);
+    }
+}
+
+
+/* =========================================================
+   Flowin — Full Screen
+   ========================================================= */
+
+/* Скрываем стандартный MAUI sidebar */
+.page:has(.notes-layout) .sidebar {
+    display: none;
+}
+
+/* Скрываем стандартную верхнюю панель */
+.page:has(.notes-layout) .top-row {
+    display: none;
+}
+
+/* Убираем стандартные отступы layout */
+.page:has(.notes-layout) main {
+    margin-left: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+}
+
+
+/* =========================================================
+   Main Notes Layout
+   ========================================================= */
+
+.notes-layout {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #171717;
+}
+
+
+/* =========================================================
+   Sidebar
+   ========================================================= */
+
+.notes-sidebar {
+    width: 320px;
+    min-width: 320px;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 28px 14px;
+    background: #202020;
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   Sidebar Header
+   ========================================================= */
+
+.notes-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 14px 20px 14px;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.notes-sidebar-title {
+    margin: 0;
+    color: #aaaaaa;
+    font-size: 23px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   Add Note Button
+   ========================================================= */
+
+.notes-add-button {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #aaaaaa;
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+    .notes-add-button:hover {
+        background: #303030;
+        color: #dddddd;
+    }
+
+    .notes-add-button:active {
+        transform: scale(0.92);
+    }
+
+
+/* =========================================================
+   Notes List
+   ========================================================= */
+
+.notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   Note Item
+   ========================================================= */
+
+.note-list-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 72px;
+    box-sizing: border-box;
+    padding: 0 12px 0 16px;
+    border-radius: 14px;
+    background: #292929;
+    color: #aaaaaa;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+    .note-list-item:hover {
+        background: #303030;
+        transform: translateX(2px);
+    }
+
+
+/* =========================================================
+   Note Icon
+   ========================================================= */
+
+.note-list-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    border-radius: 10px;
+    background: #252525;
+    color: #aaaaaa;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   Note Title in Sidebar
+   ========================================================= */
+
+.note-list-title {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   Delete Note Button
+   ========================================================= */
+
+.note-delete-button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #888888;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+/* Показываем корзину только при наведении */
+.note-list-item:hover .note-delete-button {
+    opacity: 1;
+}
+
+.note-delete-button:hover {
+    background: #3a3a3a;
+    color: #dddddd;
+}
+
+.note-delete-button:active {
+    transform: scale(0.92);
+}
+
+.note-delete-button svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   Note Editor
+   ========================================================= */
+
+.note-editor {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+    box-sizing: border-box;
+    /*
+       Верхний отступ: 45px
+       Левый отступ: 60px
+       Справа — практически до самого края
+    */
+    padding: 45px 0 45px 60px;
+    background: #171717;
+    color: #d6d6d6;
+}
+
+
+/* =========================================================
+   Note Title
+   ========================================================= */
+
+.note-editor-title {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0 0 30px 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #e5e5e5;
+    font-family: inherit;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+    .note-editor-title::placeholder {
+        color: #777777;
+    }
+
+
+/* =========================================================
+   Note Content
+   ========================================================= */
+
+.note-editor-content {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 180px);
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: #cfcfcf;
+    font-family: inherit;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+    .note-editor-content::placeholder {
+        color: #777777;
+        font-style: italic;
+    }
+
+
+/* =========================================================
+   Editor Action Buttons
+   ========================================================= */
+
+.note-editor-actions {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   Editor Button
+   ========================================================= */
+
+.note-editor-button {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #68469b;
+    border-radius: 50%;
+    background: #181818;
+    color: #d0d0d0;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+    .note-editor-button:hover {
+        background: #242424;
+        border-color: #9064c8;
+        transform: scale(1.05);
+    }
+
+    .note-editor-button:active {
+        transform: scale(0.96);
+    }
+
+    .note-editor-button svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+/* =========================================================
+   Scrollbar
+   ========================================================= */
+
+.notes-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notes-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.notes-sidebar::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 10px;
+}
+
+    .notes-sidebar::-webkit-scrollbar-thumb:hover {
+        background: #4a4a4a;
+    }
+
+/* =========================================================
+   Final position of editor fields
+   ========================================================= */
+
+.note-editor {
+    padding-top: 45px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+
+/* Название */
+.note-editor-title {
+    width: calc(100% - 120px) !important;
+    margin-top: 0 !important;
+    margin-left: 60px !important;
+    margin-right: 60px !important;
+    margin-bottom: 30px !important;
+}
+
+
+/* Контент */
+.note-editor-content {
+    width: calc(100% - 120px) !important;
+    margin-left: 60px !important;
+    margin-right: 60px !important;
+}
+
+
+/* Чтобы кнопки не зависели от положения полей */
+.note-editor-actions {
+    right: 28px !important;
+    bottom: 28px !important;
+}
+
+.sync-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: darkgray;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .sync-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .sync-button:hover {
+        background-color: rgba(128, 128, 128, 0.18);
+    }
+
+    .sync-button:active svg {
+        transform: rotate(30deg);
+    }
+
+/* =========================================================
+   Flowin — WYSIWYG Markdown Editor
+   ========================================================= */
+
+.note-editor-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+    /* Область редактирования ProseMirror */
+    .note-editor-content .ProseMirror {
+        min-height: 100%;
+        outline: none;
+        color: #cfcfcf;
+        font-family: inherit;
+        font-size: 17px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+        /* Заголовки внутри заметки */
+        .note-editor-content .ProseMirror h1,
+        .note-editor-content .ProseMirror h2,
+        .note-editor-content .ProseMirror h3 {
+            color: #e5e5e5;
+            line-height: 1.3;
+        }
+
+        /* Ссылки */
+        .note-editor-content .ProseMirror a {
+            color: #a78bfa;
+        }
+
+        /* Цитаты */
+        .note-editor-content .ProseMirror blockquote {
+            border-left: 3px solid #68469b;
+            margin-left: 0;
+            padding-left: 16px;
+            color: #aaaaaa;
+        }
+
+        /* Блоки кода */
+        .note-editor-content .ProseMirror pre {
+            overflow-x: auto;
+            padding: 12px;
+            border-radius: 8px;
+            background: #242424;
+            color: #dddddd;
+        }
+
+        /* Выделение текста */
+        .note-editor-content .ProseMirror ::selection {
+            background: #68469b;
+            color: #ffffff;
+        }
+
+/* Цвет и читаемость Markdown-редактора */
+.note-editor-content {
+    background: #1c1c1c;
+    color: #ffffff;
+}
+
+    /* Основное содержимое редактора */
+    .note-editor-content .ProseMirror {
+        background: transparent;
+        color: #ffffff;
+    }
+
+        /* Заголовки */
+        .note-editor-content .ProseMirror h1,
+        .note-editor-content .ProseMirror h2,
+        .note-editor-content .ProseMirror h3 {
+            color: #ffffff;
+        }
+
+        /* Обычные абзацы и списки */
+        .note-editor-content .ProseMirror p,
+        .note-editor-content .ProseMirror li {
+            color: #ffffff;
+        }
+
+            /* Подсказки редактора, если библиотека их использует */
+            .note-editor-content .ProseMirror p.is-editor-empty:first-child::before {
+                color: #888888;
+            }
+
+
+/* Скругление поля редактора */
+.note-editor-content {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    /* Отступ текста от скруглённых краёв */
+    .note-editor-content .ProseMirror {
+        padding: 12px;
+        box-sizing: border-box;
+    }
+
+        /* Тёмная тема для таблиц Markdown */
+        .note-editor-content .ProseMirror table {
+            border-collapse: collapse;
+            background: transparent;
+            color: #ffffff;
+        }
+
+        /* Заголовочная строка таблицы */
+        .note-editor-content .ProseMirror th {
+            background-color: #242424;
+            color: #ffffff;
+        }
+
+        /* Обычные ячейки */
+        .note-editor-content .ProseMirror td {
+            background-color: #1c1c1c;
+            color: #ffffff;
+        }
+
+        /* Границы таблицы */
+        .note-editor-content .ProseMirror th,
+        .note-editor-content .ProseMirror td {
+            border: 1px solid #3a3a3a;
+            padding: 8px 12px;
+        }
+
+/* Основная область заметки прокручивается целиком */
+.note-editor {
+    min-height: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Заголовок уезжает вместе с содержимым */
+.note-editor-title {
+    flex-shrink: 0;
+}
+
+/* Редактор занимает место по содержимому */
+.note-editor-content {
+    height: auto !important;
+    min-height: calc(100vh - 220px);
+    overflow: visible !important;
+    flex-shrink: 0;
+}
+
+/* Кнопки остаются в потоке страницы */
+.note-editor-actions {
+    flex-shrink: 0;
+}
+
+/* Тёмный скроллбар Firefox */
+.note-editor {
+    scrollbar-width: thin;
+    scrollbar-color: #454545 #171717;
+}
+
+    /* Тёмный скроллбар Chromium / WebView */
+    .note-editor::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .note-editor::-webkit-scrollbar-track {
+        background: #171717;
+    }
+
+    .note-editor::-webkit-scrollbar-thumb {
+        background: #383838;
+        border-radius: 8px;
+        border: 2px solid #171717;
+    }
+
+        .note-editor::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
+
+/* Меню команд Markdown — тёмная тема Flowin */
+.note-editor-content .slash-menu,
+.note-editor-content [role="menu"] {
+    background: #202020;
+    color: #ffffff;
+    border: 1px solid #383838;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+}
+
+    /* Пункты меню */
+    .note-editor-content .slash-menu button,
+    .note-editor-content [role="menu"] [role="menuitem"] {
+        background: transparent;
+        color: #e5e5e5;
+        border-radius: 6px;
+    }
+
+        /* Наведение и выбранный пункт */
+        .note-editor-content .slash-menu button:hover,
+        .note-editor-content [role="menu"] [role="menuitem"]:hover {
+            background: #303030;
+            color: #ffffff;
+        }
+
+    /* Второстепенные подписи и описания */
+    .note-editor-content .slash-menu small,
+    .note-editor-content .slash-menu p {
+        color: #a0a0a0;
+    }
