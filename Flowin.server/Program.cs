@@ -23,6 +23,18 @@ namespace Flowin.server
             builder.Services.AddDbContext<NotesDbContext>(s => s.UseNpgsql(connect));
             builder.Services.AddIdentityCore<User>().AddEntityFrameworkStores<NotesDbContext>();//указание Identity хранить пользователей через EFcore DB context для PostgreSQL
 
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 8;
+            }
+            );
+
             var app = builder.Build();
 
             // test connecting to PostgreSQL and EFCore 
