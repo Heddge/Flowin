@@ -178,7 +178,7 @@ namespace Flowin.Managers
         public List<Note> GetNotes()
             => _noteDbManager.GetNotes();
 
-        public List<Note> GetNotes(User curr_user)
+        public async Task<List<Note>> GetNotes(User curr_user)
             => _noteDbManager.GetNotes(curr_user);
 
 

@@ -23,7 +23,7 @@ namespace Flowin.Interfaces
         /// </summary>
         /// <returns>List-Note-</returns>
         List<Note> GetNotes();
-        List<Note> GetNotes(User curr_user);
+        Task<List<Note>> GetNotes(User curr_user);
 
 
         /// <summary>

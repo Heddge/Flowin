@@ -25,7 +25,7 @@ namespace Flowin.Objects
 
         public async Task SaveNote(Guid id, string title, string content)
         {
-            Note n = new Note(id, title, content);
+            Note n = new Note(Guid.Empty, id, title, content);
             notes.Add(n);
             await _synchronizeManager.SaveNote(n);
         }

@@ -13,7 +13,7 @@
         var response = await _authenticationManager.Logining(email, password);
         if (response != null)
         {
-            _localsessionmanager.SetUser(response);
+            await _localsessionmanager.SetUser(response);
             // System.Diagnostics.Debug.WriteLine(response.Name + " LOGGINED");
             Navigation.NavigateTo("/note/new");
         }

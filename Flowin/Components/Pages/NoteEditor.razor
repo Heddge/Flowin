@@ -14,16 +14,24 @@
     [Parameter]
     public Guid? id { get; set; }
 
-    // User currUser = _localSessionContainer.CurrentUser;
+    // User currUser = _localSessionContainer.GetUser();
     private bool isEditing = false;
-    private Note n = new Note(Guid.Empty, "", "");
+    private bool isAuthorized = false;
+    private Note n = new Note(Guid.Empty, Guid.Empty, "", "");
     private List<Note> notes = new List<Note>();
+    User curr_user = new User();
 
     protected override void OnParametersSet()
     {
         // System.Diagnostics.Debug.WriteLine("onparameterset page entered");
         isEditing = false;
 
+        curr_user = _localSessionContainer.GetUser();
+        if (curr_user.Id != Guid.Empty)
+        {
+            isAuthorized = true;
+            n.OwnerId = curr_user.Id;
+        }
         if (id.HasValue && id.Value != Guid.Empty)
         {
             var foundNote = _localSessionContainer.GetNotes().FirstOrDefault(x => x.Id == id);
@@ -34,7 +42,7 @@
                 return;
             }
         }
-        n = new Note(_localSessionContainer.GetId(), "", "");
+        n = new Note(Guid.Empty, _localSessionContainer.GetId(), "", "");
         id = n.Id;
     }
 
@@ -94,10 +102,12 @@
 
         if (!isEditing)
         {
-            await _localSessionContainer.SaveNote(n.Id, n.Title, n.Content);
-            isEditing = true;
-            Navigation.NavigateTo($"/note-editor/{n.Id}");
-
+            if (isAuthorized)
+                await _localSessionContainer.SaveNote(curr_user, n.Id, n.Title, n.Content);
+            else
+                await _localSessionContainer.SaveNote(n.Id, n.Title, n.Content);
+                isEditing = true;
+                Navigation.NavigateTo($"/note-editor/{n.Id}");                
         }
         else
         {
@@ -177,6 +187,8 @@
             @if (_localSessionContainer.GetNotes() != null)
             {
                 if (id == null) id = Guid.Empty;
+                if (isAuthorized)
+                    _localSessionContainer.GetNotesAsync(curr_user);
                 @* System.Diagnostics.Debug.WriteLine("rendering page entered"); *@
                 foreach (Note note in _localSessionContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
                 {

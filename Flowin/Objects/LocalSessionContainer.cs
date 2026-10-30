@@ -18,22 +18,25 @@ namespace Flowin.Objects
         }
         public User GetUser() => CurrentUser;
 
-        public void SetUser(User user)
+        public async Task SetUser(User user)
         {
             this.CurrentUser = user;
-            this.notes = _synchronizeManager.GetNotes(user);
+            this.notes = await _synchronizeManager.GetNotes(user);
             System.Diagnostics.Debug.WriteLine("USER CHECKING ->\n" +  user.Id + " " + user.Email);
         }
+
+        public async Task<List<Note>> GetNotesAsync(User curr_user)
+            => this.notes = await _synchronizeManager.GetNotes(curr_user);
 
         //public async Task GetNotesAsync(User curr_user)
         //    => this.notes = _synchronizeManager.GetNotes();
 
-        //public async Task SaveNote(User curr_user, Guid id, string title, string content)
-        //{
-        //    Note n = new Note(id, title, content);
-        //    notes.Add(n);
-        //    await _synchronizeManager.SaveNote(n);
-        //}
+        public async Task SaveNote(User curr_user, Guid id, string title, string content)
+        {
+            Note n = new Note(curr_user.Id, id, title, content);
+            notes.Add(n);
+            await _synchronizeManager.SaveNote(curr_user, n);
+        }
 
         //public async Task UpdateNote(User curr_user, Note n)
         //{

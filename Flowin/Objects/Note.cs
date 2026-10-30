@@ -15,8 +15,9 @@ namespace Flowin.Objects
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public Note() { }
-        public Note(Guid id, string title, string content)
+        public Note(Guid ownerId, Guid id, string title, string content)
         {
+            OwnerId = ownerId;
             Id = id;
             Title = title;
             Content = content;

@@ -65,7 +65,7 @@ namespace Flowin.Managers
 
             var Id = curr_user.Id;
 
-            foreach (var note in factory.Notes.ToList().Where(x => x.OwnerId == Id))
+            foreach (var note in factory.Notes.Where(x => x.OwnerId == Id).ToList())
             {
                 note.CreatedAt = DateTime.SpecifyKind(note.CreatedAt, DateTimeKind.Utc);
                 note.UpdatedAt = DateTime.SpecifyKind(note.UpdatedAt, DateTimeKind.Utc);
