@@ -4,25 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Flowin.Interfaces;
+using Flowin.Managers;
 
 namespace Flowin.Objects
 {
     public class LocalSessionContainer : NotesContainer
     {
         public User CurrentUser { get; set; }
+        private UserSessionManager _userSessionManager;
 
-        public LocalSessionContainer(ISynchronizeManager sm) : base(sm)
+        public LocalSessionContainer(ISynchronizeManager sm, UserSessionManager usm) : base(sm)
         {
-            CurrentUser = new User("Egor", "Test", "egorik@test.ru", Guid.Empty);
-            CurrentUser.Email = "egor@test.ru";
+            _userSessionManager = usm;
+            CurrentUser = _userSessionManager.AuthorizedUser;
         }
         public User GetUser() => CurrentUser;
+
+        public void Unauthorize()
+            => _userSessionManager.Unauthorize();
+
+
 
         public async Task SetUser(User user)
         {
             this.CurrentUser = user;
             this.notes = await _synchronizeManager.GetNotes(user);
-            System.Diagnostics.Debug.WriteLine("USER CHECKING ->\n" +  user.Id + " " + user.Email);
+            _userSessionManager.SetAuthorizedUser(user);
         }
 
         public async Task<List<Note>> GetNotesAsync(User curr_user)

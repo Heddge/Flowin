@@ -84,6 +84,7 @@
 
     private void Logout()
     {
+        _localSessionContainer.Unauthorize();
         showUserMenu = false;
         Navigation.NavigateTo("/login");
     }

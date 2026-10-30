@@ -37,6 +37,7 @@ namespace Flowin
             builder.Services.AddPooledDbContextFactory<NoteDbContext>(options => options.UseSqlite("Data Source=" + _dbpath));
             builder.Services.AddHttpClient<INotesApiManager, NotesApiManager>();
             builder.Services.AddSingleton<AuthenticationManager>();
+            builder.Services.AddSingleton<UserSessionManager>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
