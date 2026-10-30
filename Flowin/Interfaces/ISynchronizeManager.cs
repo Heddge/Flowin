@@ -23,6 +23,7 @@ namespace Flowin.Interfaces
         /// </summary>
         /// <returns>List-Note-</returns>
         List<Note> GetNotes();
+        List<Note> GetNotes(User curr_user);
 
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace Flowin.Interfaces
         /// <param name="note">Note that needed to save.</param>
         /// <returns>isSaved?</returns>
         Task<bool> SaveNote(Note note);
+        Task<bool> SaveNote(User curr_user, Note note);
 
 
 
@@ -40,6 +42,7 @@ namespace Flowin.Interfaces
         /// <param name="note">Note that needed to update.</param>
         /// <returns>isUpdated?</returns>
         Task<bool> UpdateNote(Note note);
+        Task<bool> UpdateNote(User curr_user, Note note);
 
 
 
@@ -49,5 +52,6 @@ namespace Flowin.Interfaces
         /// <param name="note">Note that needed to delete.</param>
         /// <returns>isDeleted?</returns>
         Task<bool> DeleteNote(Note note);
+        Task<bool> DeleteNote(User curr_user, Note note);
     }
 }

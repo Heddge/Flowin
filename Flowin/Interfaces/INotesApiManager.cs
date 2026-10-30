@@ -34,6 +34,7 @@ namespace Flowin.Interfaces
         /// <param name="note">Note needs to save</param>
         /// <returns>Saved note</returns>
         Task<Note?> SaveNote(Note note);
+        //Task<Note?> SaveNote(User curr_user, Note note);
 
         /// <summary>
         /// Deleting note from server`s DB

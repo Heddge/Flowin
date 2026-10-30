@@ -178,6 +178,10 @@ namespace Flowin.Managers
         public List<Note> GetNotes()
             => _noteDbManager.GetNotes();
 
+        public List<Note> GetNotes(User curr_user)
+            => _noteDbManager.GetNotes(curr_user);
+
+
         public async Task<bool> SaveNote(Note note)
         {
             _noteDbManager.AddNote(note);
@@ -192,11 +196,42 @@ namespace Flowin.Managers
             return false;
         }
 
+        public async Task<bool> SaveNote(User curr_user, Note note)
+        {
+            _noteDbManager.AddNote(note);
+            _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, curr_user.Id, 1));
+
+            if (await _notesApiManager.SaveNote(note) != null)
+            {
+                _noteDbManager.DeleteSyncStatus(note.Id);
+                return true;
+            }
+
+            return false;
+        }
+
+
         public async Task<bool> UpdateNote(Note note)
         {
             _noteDbManager.UpdateNote(note);
             if (!_noteDbManager.IsThereAnyStatus(note.Id))
                 _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, Guid.Empty, 2));
+
+
+            if (await _notesApiManager.UpdateNote(note) != null)
+            {
+                _noteDbManager.DeleteSyncStatus(note.Id);
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> UpdateNote(User curr_user, Note note)
+        {
+            _noteDbManager.UpdateNote(note);
+            if (!_noteDbManager.IsThereAnyStatus(note.Id))
+                _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, curr_user.Id, 2));
 
 
             if (await _notesApiManager.UpdateNote(note) != null)
@@ -233,6 +268,29 @@ namespace Flowin.Managers
             return true;
         }
 
+        public async Task<bool> DeleteNote(User curr_user, Note n)
+        {
+            _noteDbManager.DeleteNote(n);
 
+            if (!_noteDbManager.IsThereAnyStatus(n.Id))
+                _noteDbManager.AddSyncStatus(new SyncStatus(n.Id, curr_user.Id, 3));
+            else
+            {
+                if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
+                {
+                    _noteDbManager.DeleteSyncStatus(n.Id);
+                    return true;
+                }
+                else
+                    _noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, curr_user.Id, 3));
+            }
+
+            if (await _notesApiManager.DeleteNote(n.Id))
+                _noteDbManager.DeleteSyncStatus(n.Id);
+            else
+                return false;
+
+            return true;
+        }
     }
 }

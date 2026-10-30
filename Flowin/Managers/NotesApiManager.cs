@@ -142,6 +142,25 @@ namespace Flowin.Managers
             }
         }
 
+        //public async Task<Note?> SaveNote(User curr_user, Note note)
+        //{
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsJsonAsync<Note>(_apiUrlNotes, note);
+        //        if (!response.IsSuccessStatusCode)
+        //            return null;
+
+        //        return await response.Content.ReadFromJsonAsync<Note>();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("404. HTTP exception NotesApiManager.SaveNote(note).");
+        //        System.Diagnostics.Debug.WriteLine(ex.Message);
+        //        return null;
+        //    }
+        //}
+
+
         public async Task<bool> DeleteNote(Guid id)
         {
             try

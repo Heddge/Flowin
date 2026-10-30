@@ -24,8 +24,7 @@ namespace Flowin.Managers
             if (!email.Contains('@') || !email.Contains('.'))
                 return;
 
-            User new_user = new User(name, surname, email);
-            new_user.Email = email;
+            User new_user = new User(name, surname, email, Guid.NewGuid());
 
             await notesApiManager.CreateUser(new_user, password);
         }

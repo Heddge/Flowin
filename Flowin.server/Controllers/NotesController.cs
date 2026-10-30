@@ -140,10 +140,8 @@ namespace Flowin.server.Controllers
             try
             {
                 if (lr == null) return NotFound();
-                System.Diagnostics.Debug.WriteLine(lr.Email + " DIAGNOS");
 
                 var user = await _userManager.FindByEmailAsync(lr.Email);
-                System.Diagnostics.Debug.WriteLine(user?.Email + " DIAGNOS");
 
                 if (user == null)
                     return Unauthorized();
@@ -151,7 +149,6 @@ namespace Flowin.server.Controllers
                 var response = await _userManager.CheckPasswordAsync(user, lr.Password);
                 if (response)
                     return Ok(user);
-
                 return NotFound();
             }
             catch (Exception ex)

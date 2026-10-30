@@ -31,6 +31,13 @@ namespace Flowin.Managers
             return factory.SaveChanges() == 1;
         }
 
+        //public bool AddNote(User curr_user, Note n)
+        //{
+        //    using var factory = _contextFactory.CreateDbContext();
+        //    factory.Notes.Add(n);
+        //    return factory.SaveChanges() == 1;
+        //}
+
         public Note? GetNote(Guid id)
         {
             using var factory = _contextFactory.CreateDbContext();
@@ -50,6 +57,24 @@ namespace Flowin.Managers
 
             return result;
         }
+
+        public List<Note> GetNotes(User curr_user)
+        {
+            List<Note> result = new List<Note>();
+            using var factory = _contextFactory.CreateDbContext();
+
+            var Id = curr_user.Id;
+
+            foreach (var note in factory.Notes.ToList().Where(x => x.OwnerId == Id))
+            {
+                note.CreatedAt = DateTime.SpecifyKind(note.CreatedAt, DateTimeKind.Utc);
+                note.UpdatedAt = DateTime.SpecifyKind(note.UpdatedAt, DateTimeKind.Utc);
+                result.Add(note);
+            }
+
+            return result;
+        }
+
 
         public bool UpdateNote(Note n)
         {
