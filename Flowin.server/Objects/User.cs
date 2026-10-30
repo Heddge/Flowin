@@ -4,6 +4,7 @@ namespace Flowin.server.Objects
 {
     public class User : IdentityUser<Guid>
     {
+        public override Guid Id {  get; set; }
         public string Name { get; set; } = "";
         public string Surname { get; set; } = "";
         public override string Email { get; set; } = "";
@@ -11,12 +12,13 @@ namespace Flowin.server.Objects
         public DateTime CreatedAt { get; set; }
         public User() { }
         public User(string name, string sname, 
-            string email)
+            string email, Guid id)
         {
+            Id = id;
             Name = name;
             Surname = sname;
             Email = email;
-            UserName = email + name + "UsName";
+            UserName = Id.ToString().Replace('-', 'o');
             CreatedAt = DateTime.UtcNow;
         }
     }

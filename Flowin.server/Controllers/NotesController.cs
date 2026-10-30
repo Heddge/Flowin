@@ -114,10 +114,12 @@ namespace Flowin.server.Controllers
             try
             {
                 if (rr == null) return NotFound();
-                User us = new User(rr.Name, rr.Surname, rr.Email);
-                var resp = await _userManager.CreateAsync(us, rr.Password);
-                //добавить проверку наличия ошибок. если их нет - savechanges.
+                System.Diagnostics.Debug.WriteLine("USEING -> " + rr.Id);
 
+                User us = new User(rr.Name, rr.Surname, rr.Email, rr.Id);
+                var resp = await _userManager.CreateAsync(us, rr.Password);
+
+                //добавить проверку наличия ошибок. если их нет - savechanges.
                 if (!resp.Succeeded)
                 {
                     foreach (var error in resp.Errors)
@@ -140,11 +142,11 @@ namespace Flowin.server.Controllers
             try
             {
                 if (lr == null) return NotFound();
-                System.Diagnostics.Debug.WriteLine(lr.Email + " DIAGNOS");
 
                 var user = await _userManager.FindByEmailAsync(lr.Email);
-                System.Diagnostics.Debug.WriteLine(user?.Email + " DIAGNOS");
-
+                //System.Diagnostics.Debug.WriteLine(user?.Email);
+                //System.Diagnostics.Debug.WriteLine($"Email from request: '{lr.Email}'");
+                //System.Diagnostics.Debug.WriteLine($"Normalized request: '{_userManager.NormalizeEmail(lr.Email)}'");
                 if (user == null)
                     return Unauthorized();
 

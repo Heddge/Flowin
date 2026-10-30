@@ -13,17 +13,19 @@ namespace Flowin.Objects
         public string Surname { get; set; } = "";
         public string Email { get; set; } = "";
         public string UserName { get; set; } = "";
+        public Guid Id { get; set; } = Guid.Empty;
         public DateTime CreatedAt { get; set; }
 
         public User() { }
 
         public User(string name, string sname,
-            string email)
+            string email, Guid id)
         {
             Name = name;
             Surname = sname;
             Email = email;
-            UserName = email + name + "UsName";
+            Id = id;
+            UserName = Id.ToString().Replace('-', 'o');
             CreatedAt = DateTime.UtcNow;
         }
     }

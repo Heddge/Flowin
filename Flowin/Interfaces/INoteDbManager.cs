@@ -10,10 +10,12 @@ namespace Flowin.Interfaces
     {
         // TO WORK WITH NOTES IN SQLITE
         public bool AddNote(Note n);
+        //public bool AddNote(User curr_user, Note n);
 
         public Note? GetNote(Guid id);
 
         public List<Note> GetNotes();
+        public List<Note> GetNotes(User curr_user);
         public bool UpdateNote(Note n);
         public bool DeleteNote(Note n);
 

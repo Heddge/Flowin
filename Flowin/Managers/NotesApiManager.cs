@@ -142,6 +142,25 @@ namespace Flowin.Managers
             }
         }
 
+        //public async Task<Note?> SaveNote(User curr_user, Note note)
+        //{
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsJsonAsync<Note>(_apiUrlNotes, note);
+        //        if (!response.IsSuccessStatusCode)
+        //            return null;
+
+        //        return await response.Content.ReadFromJsonAsync<Note>();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("404. HTTP exception NotesApiManager.SaveNote(note).");
+        //        System.Diagnostics.Debug.WriteLine(ex.Message);
+        //        return null;
+        //    }
+        //}
+
+
         public async Task<bool> DeleteNote(Guid id)
         {
             try
@@ -181,7 +200,9 @@ namespace Flowin.Managers
 
         public async Task<RequestResultStatus<User>?> CreateUser(User new_us, string p)
         {
-            RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p);
+            RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p, new_us.Id);
+            System.Diagnostics.Debug.WriteLine("USEING -> " +rr.Id);
+
             var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers+"/Register", rr);
             if (!resp.IsSuccessStatusCode)
                 return new RequestResultStatus<User>(RequestStatus.NotFound, new_us);
