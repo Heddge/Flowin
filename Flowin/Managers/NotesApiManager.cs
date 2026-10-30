@@ -200,7 +200,9 @@ namespace Flowin.Managers
 
         public async Task<RequestResultStatus<User>?> CreateUser(User new_us, string p)
         {
-            RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p);
+            RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p, new_us.Id);
+            System.Diagnostics.Debug.WriteLine("USEING -> " +rr.Id);
+
             var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers+"/Register", rr);
             if (!resp.IsSuccessStatusCode)
                 return new RequestResultStatus<User>(RequestStatus.NotFound, new_us);

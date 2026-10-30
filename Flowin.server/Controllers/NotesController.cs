@@ -114,7 +114,9 @@ namespace Flowin.server.Controllers
             try
             {
                 if (rr == null) return NotFound();
-                User us = new User(rr.Name, rr.Surname, rr.Email);
+                System.Diagnostics.Debug.WriteLine("USEING -> " + rr.Id);
+
+                User us = new User(rr.Name, rr.Surname, rr.Email, rr.Id);
                 var resp = await _userManager.CreateAsync(us, rr.Password);
 
                 //добавить проверку наличия ошибок. если их нет - savechanges.
