@@ -38,28 +38,28 @@ namespace Flowin.Objects
             await _synchronizeManager.SaveNote(curr_user, n);
         }
 
-        //public async Task UpdateNote(User curr_user, Note n)
-        //{
-        //    int idx = notes.FindIndex(x => x.Id == n.Id);
-        //    if (idx == -1)
-        //        return;
+        public async Task UpdateNote(User curr_user, Note n)
+        {
+            int idx = notes.FindIndex(x => x.Id == n.Id);
+            if (idx == -1)
+                return;
 
-        //    n.UpdatedAt = DateTime.UtcNow;
-        //    notes[idx].Title = n.Title;
-        //    notes[idx].Content = n.Content;
+            n.UpdatedAt = DateTime.UtcNow;
+            notes[idx].Title = n.Title;
+            notes[idx].Content = n.Content;
 
-        //    await _synchronizeManager.UpdateNote(n);
-        //}
+            await _synchronizeManager.UpdateNote(curr_user, n);
+        }
 
-        //public async Task DeleteNote(User curr_user, Guid id)
-        //{
-        //    Note? n = notes.FirstOrDefault(x => x.Id == id);
-        //    if (n != null)
-        //    {
-        //        notes.Remove(n);
-        //        await _synchronizeManager.DeleteNote(n);
-        //    }
-        //}
+        public async Task DeleteNote(User curr_user, Guid id)
+        {
+            Note? n = notes.FirstOrDefault(x => x.Id == id);
+            if (n != null)
+            {
+                notes.Remove(n);
+                await _synchronizeManager.DeleteNote(curr_user, n);
+            }
+        }
 
         //// getters
         //public List<Note> GetNotes(User curr_user) => notes;

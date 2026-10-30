@@ -106,12 +106,15 @@
                 await _localSessionContainer.SaveNote(curr_user, n.Id, n.Title, n.Content);
             else
                 await _localSessionContainer.SaveNote(n.Id, n.Title, n.Content);
-                isEditing = true;
-                Navigation.NavigateTo($"/note-editor/{n.Id}");                
+            isEditing = true;
+            Navigation.NavigateTo($"/note-editor/{n.Id}");
         }
         else
         {
-            await _localSessionContainer.UpdateNote(n);
+            if (isAuthorized)
+                await _localSessionContainer.UpdateNote(curr_user, n);
+            else
+                await _localSessionContainer.UpdateNote(n);
             isEditing = true;
             Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
         }
