@@ -1,6 +1,7 @@
 ﻿@page "/login"
 
 @inject AuthenticationManager _authenticationManager
+@inject LocalSessionContainer _localsessionmanager
 @inject NavigationManager Navigation
 
 @code {
@@ -12,7 +13,8 @@
         var response = await _authenticationManager.Logining(email, password);
         if (response != null)
         {
-            System.Diagnostics.Debug.WriteLine(response.Name + " LOGGINED");
+            _localsessionmanager.SetUser(response);
+            // System.Diagnostics.Debug.WriteLine(response.Name + " LOGGINED");
             Navigation.NavigateTo("/note/new");
         }
     }

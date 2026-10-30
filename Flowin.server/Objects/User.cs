@@ -16,7 +16,7 @@ namespace Flowin.server.Objects
             Name = name;
             Surname = sname;
             Email = email;
-            UserName = email + name + "UsName";
+            UserName = Id.ToString().Replace('-', 'o');
             CreatedAt = DateTime.UtcNow;
         }
     }

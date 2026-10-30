@@ -32,6 +32,8 @@ namespace Flowin.server
                 options.Password.RequireDigit = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 8;
+
+                options.User.RequireUniqueEmail = true;
             }
             );
 

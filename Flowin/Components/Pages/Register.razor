@@ -11,7 +11,10 @@
     string second_password = "";
 
     private async Task Registration()
-        => await authManager.Registration(name, surname, email, password, second_password);
+    {
+        await authManager.Registration(name, surname, email, password, second_password);
+        Navigation.NavigateTo("/login");
+    }
 
     private void GoToLogin()
         => Navigation.NavigateTo("/login");
@@ -36,7 +39,7 @@
                        type="text"
                        placeholder="Введите имя"
                        autocomplete="given-name"
-                       @bind="@name"/>
+                       @bind="@name" />
             </div>
 
             <div class="auth-field">
@@ -45,7 +48,7 @@
                        class="auth-input"
                        type="text"
                        placeholder="Введите фамилию"
-                       autocomplete="family-name" 
+                       autocomplete="family-name"
                        @bind="@surname" />
             </div>
 
@@ -55,7 +58,7 @@
                        class="auth-input"
                        type="email"
                        placeholder="Введите email"
-                       autocomplete="email" 
+                       autocomplete="email"
                        @bind="@email" />
             </div>
 
@@ -65,7 +68,7 @@
                        class="auth-input"
                        type="password"
                        placeholder="Придумайте пароль"
-                       autocomplete="new-password" 
+                       autocomplete="new-password"
                        @bind="@password" />
             </div>
 
@@ -77,7 +80,7 @@
                        class="auth-input"
                        type="password"
                        placeholder="Повторите пароль"
-                       autocomplete="new-password" 
+                       autocomplete="new-password"
                        @bind="@second_password" />
             </div>
 

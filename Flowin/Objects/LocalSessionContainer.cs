@@ -18,42 +18,49 @@ namespace Flowin.Objects
         }
         public User GetUser() => CurrentUser;
 
-        public async Task GetNotesAsync(User curr_user)
-            => this.notes = _synchronizeManager.GetNotes();
-
-        public async Task SaveNote(User curr_user, Guid id, string title, string content)
+        public void SetUser(User user)
         {
-            Note n = new Note(id, title, content);
-            notes.Add(n);
-            await _synchronizeManager.SaveNote(n);
+            this.CurrentUser = user;
+            this.notes = _synchronizeManager.GetNotes(user);
+            System.Diagnostics.Debug.WriteLine("USER CHECKING ->\n" +  user.Id + " " + user.Email);
         }
 
-        public async Task UpdateNote(User curr_user, Note n)
-        {
-            int idx = notes.FindIndex(x => x.Id == n.Id);
-            if (idx == -1)
-                return;
+        //public async Task GetNotesAsync(User curr_user)
+        //    => this.notes = _synchronizeManager.GetNotes();
 
-            n.UpdatedAt = DateTime.UtcNow;
-            notes[idx].Title = n.Title;
-            notes[idx].Content = n.Content;
+        //public async Task SaveNote(User curr_user, Guid id, string title, string content)
+        //{
+        //    Note n = new Note(id, title, content);
+        //    notes.Add(n);
+        //    await _synchronizeManager.SaveNote(n);
+        //}
 
-            await _synchronizeManager.UpdateNote(n);
-        }
+        //public async Task UpdateNote(User curr_user, Note n)
+        //{
+        //    int idx = notes.FindIndex(x => x.Id == n.Id);
+        //    if (idx == -1)
+        //        return;
 
-        public async Task DeleteNote(User curr_user, Guid id)
-        {
-            Note? n = notes.FirstOrDefault(x => x.Id == id);
-            if (n != null)
-            {
-                notes.Remove(n);
-                await _synchronizeManager.DeleteNote(n);
-            }
-        }
+        //    n.UpdatedAt = DateTime.UtcNow;
+        //    notes[idx].Title = n.Title;
+        //    notes[idx].Content = n.Content;
 
-        // getters
-        public List<Note> GetNotes(User curr_user) => notes;
-        public int GetNotesCount(User curr_user) => notes.Count;
-        public Guid GetId(User curr_user) => Guid.NewGuid();
+        //    await _synchronizeManager.UpdateNote(n);
+        //}
+
+        //public async Task DeleteNote(User curr_user, Guid id)
+        //{
+        //    Note? n = notes.FirstOrDefault(x => x.Id == id);
+        //    if (n != null)
+        //    {
+        //        notes.Remove(n);
+        //        await _synchronizeManager.DeleteNote(n);
+        //    }
+        //}
+
+        //// getters
+        //public List<Note> GetNotes(User curr_user) => notes;
+        //public int GetNotesCount(User curr_user) => notes.Count;
+        //public Guid GetId(User curr_user) => Guid.NewGuid();
     }
 }
