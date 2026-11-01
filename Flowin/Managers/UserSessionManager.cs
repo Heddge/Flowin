@@ -25,7 +25,7 @@ namespace Flowin.Managers
             this.IsAuthorized = false;
             this.AuthorizedUser = new User();
             if (Preferences.ContainsKey("AuthorizedUser"))
-                Preferences.Clear("AutorizedUser");
+                Preferences.Remove("AuthorizedUser");
         }
 
         public void RestoreAuthorization()
