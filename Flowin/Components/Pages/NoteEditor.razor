@@ -52,9 +52,10 @@
 
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        await SynchronizateIt();
+        // await SynchronizateIt();
+        return Task.CompletedTask;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -88,7 +89,7 @@
         showUserMenu = !showUserMenu;
     }
 
-    private async void Logout()
+    private async Task Logout()
     {
         _localSessionContainer.Unauthorize();
         showUserMenu = false;

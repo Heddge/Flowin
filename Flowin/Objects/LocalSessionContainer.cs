@@ -10,28 +10,39 @@ namespace Flowin.Objects
 {
     public class LocalSessionContainer : NotesContainer
     {
-        public User CurrentUser { get; set; }
+        public User CurrentUser { get; set; } = new User("", "", "", Guid.Empty);
         private UserSessionManager _userSessionManager;
+        private Task? _initializationTask;
 
         public LocalSessionContainer(ISynchronizeManager sm, UserSessionManager usm) : base(sm)
         {
             _userSessionManager = usm;
-            CurrentUser = _userSessionManager.GetUser().Result;
         }
         public User GetUser() => CurrentUser;
-        public async Task<User> GetUserASync()
+        public async Task GetUserASync()
         {
-            return await _userSessionManager.GetUser();
+            this.CurrentUser = await _userSessionManager.GetUser();
         }
 
-        public async void Unauthorize()
+        public async Task Unauthorize()
         {
             await _userSessionManager.Unauthorize();
             this.CurrentUser = await _userSessionManager.GetUser();
         }
 
 
+        public Task InitializeAsync()
+        {
+            return _initializationTask ??= InitializeCoreAsync(); // если задача не создана - создать, иначе - вернуть существующую
+        }
 
+        private async Task InitializeCoreAsync()
+        {
+            await GetUserASync();
+            await GetNotesAsync(CurrentUser);
+        }
+
+        
         public async Task SetUser(User user)
         {
             this.CurrentUser = user;

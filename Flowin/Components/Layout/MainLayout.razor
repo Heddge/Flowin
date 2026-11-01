@@ -1,17 +1,110 @@
 ﻿@inherits LayoutComponentBase
+@inject LocalSessionContainer LocalSession
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@code
+{
+    private bool isLoading = true;
+    private bool isFadingOut = false;
+    private string loadingMessage = "Восстанавливаем сессию";
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+    protected override async Task OnInitializedAsync()
+    {
+        var loadingStarted = DateTime.UtcNow;
+
+        loadingMessage = "Восстанавливаем сессию";
+        await InvokeAsync(StateHasChanged);
+
+        await LocalSession.GetUserASync();
+
+        loadingMessage = "Подготавливаем заметки";
+        await InvokeAsync(StateHasChanged);
+
+        await LocalSession.GetNotesAsync(LocalSession.CurrentUser);
+
+        // Синхронизируем заметки авторизованного пользователя
+        if (LocalSession.CurrentUser.Id != Guid.Empty)
+        {
+            await SynchronizeInBackgroundAsync();
+        }
+
+        // Минимальное время отображения экрана загрузки — 1 секунда
+        var elapsed = DateTime.UtcNow - loadingStarted;
+        var remaining = TimeSpan.FromSeconds(1) - elapsed;
+
+        if (remaining > TimeSpan.Zero)
+            await Task.Delay(remaining);
+
+        // Запускаем плавное исчезновение
+        await InvokeAsync(() =>
+        {
+            isFadingOut = true;
+            StateHasChanged();
+        });
+
+        await Task.Delay(300);
+
+        isLoading = false;
+    }
+
+    private async Task SynchronizeInBackgroundAsync()
+    {
+        try
+        {
+            await LocalSession.Synchronizate();
+            await LocalSession.GetNotesAsync(LocalSession.CurrentUser);
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"Background synchronization failed: {ex.Message}");
+        }
+    }
+}
+
+@if (!isLoading)
+{
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
         </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+        <main>
+            <div class="top-row px-4">
+                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">
+                    About
+                </a>
+            </div>
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+}
+
+@if (isLoading)
+{
+    <div class="loading-overlay @(isFadingOut ? "fade-out" : "")">
+        <div class="loading-content">
+
+            <div class="loading-logo">F.</div>
+
+            <div class="loading-brand">Flowin</div>
+
+            <div class="loading-description">
+                Подготавливаем ваше пространство
+            </div>
+
+            <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+            </div>
+
+            <div class="loading-message">
+                @loadingMessage
+            </div>
+
+        </div>
+    </div>
+}
