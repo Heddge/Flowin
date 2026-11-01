@@ -6,12 +6,8 @@ namespace Flowin.Managers
     public class UserSessionManager
     {
         public bool IsAuthorized { get; set; } = false;
-        public User AuthorizedUser { get; set; }
-        public UserSessionManager()
-        {
-            AuthorizedUser = new User();
-            RestoreAuthorization();
-        }
+        public User AuthorizedUser { get; set; } = new User("", "", "", Guid.Empty);
+        public UserSessionManager() { }
 
         public void SetAuthorizedUser(User authed_user)
         {
@@ -20,15 +16,15 @@ namespace Flowin.Managers
             Preferences.Set("AuthorizedUser", JsonSerializer.Serialize(AuthorizedUser));
         }
 
-        public void Unauthorize()
+        public async Task Unauthorize()
         {
             this.IsAuthorized = false;
-            this.AuthorizedUser = new User();
+            this.AuthorizedUser = new User("", "", "", Guid.Empty);
             if (Preferences.ContainsKey("AuthorizedUser"))
                 Preferences.Remove("AuthorizedUser");
         }
 
-        public void RestoreAuthorization()
+        public async Task RestoreAuthorization()
         {
             if (Preferences.ContainsKey("AuthorizedUser"))
             {
@@ -39,6 +35,12 @@ namespace Flowin.Managers
                     this.IsAuthorized = true;
                 }
             }
+        }
+
+        public async Task<User> GetUser()
+        {
+            await RestoreAuthorization();
+            return this.AuthorizedUser;
         }
     }
 }

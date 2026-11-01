@@ -16,12 +16,19 @@ namespace Flowin.Objects
         public LocalSessionContainer(ISynchronizeManager sm, UserSessionManager usm) : base(sm)
         {
             _userSessionManager = usm;
-            CurrentUser = _userSessionManager.AuthorizedUser;
+            CurrentUser = _userSessionManager.GetUser().Result;
         }
         public User GetUser() => CurrentUser;
+        public async Task<User> GetUserASync()
+        {
+            return await _userSessionManager.GetUser();
+        }
 
-        public void Unauthorize()
-            => _userSessionManager.Unauthorize();
+        public async void Unauthorize()
+        {
+            await _userSessionManager.Unauthorize();
+            this.CurrentUser = await _userSessionManager.GetUser();
+        }
 
 
 

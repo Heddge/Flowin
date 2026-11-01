@@ -1024,3 +1024,18 @@ a,
         stroke-linejoin: round;
     }
 
+.account-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+}
+
+    .account-chevron svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .account-chevron.rotated {
+        transform: rotate(180deg);
+    }

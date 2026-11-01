@@ -21,6 +21,12 @@
 
     private void GoToRegister()
         => Navigation.NavigateTo("/register");
+
+    private void GoToEditor()
+    {
+        _localsessionmanager.Unauthorize();
+        Navigation.NavigateTo("/");
+    }
 }
 
 <div class="auth-page">
@@ -66,6 +72,13 @@
             <button class="auth-link"
                     @onclick="GoToRegister">
                 Зарегистрироваться
+            </button>
+        </p>
+        <p class="auth-footer">
+            Продолжить 
+            <button class="auth-link"
+                    @onclick="GoToEditor">
+                без аккаунта
             </button>
         </p>
 
