@@ -185,15 +185,15 @@ namespace Flowin.Managers
         public async Task<bool> SaveNote(Note note)
         {
             _noteDbManager.AddNote(note);
-            _noteDbManager.AddSyncStatus(new SyncStatus(note.Id,Guid.Empty, 1));
+            //_noteDbManager.AddSyncStatus(new SyncStatus(note.Id,Guid.Empty, 1));
 
-            if (await _notesApiManager.SaveNote(note) != null)
-            {
-                _noteDbManager.DeleteSyncStatus(note.Id);
-                return true;
-            }
+            //if (await _notesApiManager.SaveNote(note) != null)
+            //{
+            //_noteDbManager.DeleteSyncStatus(note.Id);
+            //return true;
+            //}
 
-            return false;
+            return true;
         }
 
         public async Task<bool> SaveNote(User curr_user, Note note)
@@ -214,17 +214,17 @@ namespace Flowin.Managers
         public async Task<bool> UpdateNote(Note note)
         {
             _noteDbManager.UpdateNote(note);
-            if (!_noteDbManager.IsThereAnyStatus(note.Id))
-                _noteDbManager.AddSyncStatus(new SyncStatus(note.Id, Guid.Empty, 2));
+            //if (!_noteDbManager.IsThereAnyStatus(note.Id))
+                //_noteDbManager.AddSyncStatus(new SyncStatus(note.Id, Guid.Empty, 2));
 
 
-            if (await _notesApiManager.UpdateNote(note) != null)
-            {
-                _noteDbManager.DeleteSyncStatus(note.Id);
-                return true;
-            }
+            //if (await _notesApiManager.UpdateNote(note) != null)
+            //{
+                //_noteDbManager.DeleteSyncStatus(note.Id);
+                //return true;
+            //}
 
-            return false;
+            return true;
         }
 
         public async Task<bool> UpdateNote(User curr_user, Note note)
@@ -247,23 +247,23 @@ namespace Flowin.Managers
         {
             _noteDbManager.DeleteNote(n);
 
-            if (!_noteDbManager.IsThereAnyStatus(n.Id))
-                _noteDbManager.AddSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
-            else
-            {
-                if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
-                {
-                    _noteDbManager.DeleteSyncStatus(n.Id);
-                    return true;
-                }
-                else
-                    _noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
-            }
+            //if (!_noteDbManager.IsThereAnyStatus(n.Id))
+                //_noteDbManager.AddSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
+            //else
+            //{
+                //if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
+                //{
+                    //_noteDbManager.DeleteSyncStatus(n.Id);
+                    //return true;
+                //}
+                //else
+                    //_noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
+            //}
 
-            if (await _notesApiManager.DeleteNote(n.Id))
-                _noteDbManager.DeleteSyncStatus(n.Id);
-            else
-                return false;
+            //if (await _notesApiManager.DeleteNote(n.Id))
+                //_noteDbManager.DeleteSyncStatus(n.Id);
+            //else
+                //return false;
 
             return true;
         }
