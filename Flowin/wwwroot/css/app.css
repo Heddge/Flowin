@@ -1196,3 +1196,51 @@ a,
         animation: none;
     }
 }
+.notes-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Список заметок занимает свободное пространство */
+.notes-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Блок аккаунта всегда остаётся снизу */
+.sidebar-account {
+    flex-shrink: 0;
+    margin-top: auto;
+    position: relative;
+    z-index: 2;
+    background: inherit;
+}
+/* Тёмный скроллбар Firefox */
+.notes-list {
+    scrollbar-width: thin;
+    scrollbar-color: #454545 #171717;
+}
+
+    /* Тёмный скроллбар Chromium / WebView */
+    .notes-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .notes-list::-webkit-scrollbar-track {
+        background: #171717;
+    }
+
+    .notes-list::-webkit-scrollbar-thumb {
+        background: #383838;
+        border-radius: 8px;
+        border: 2px solid #171717;
+    }
+
+        .notes-list::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
