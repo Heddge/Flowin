@@ -1137,3 +1137,62 @@ a,
         .note-editor-content .ProseMirror td {
             background: transparent;
         }
+
+/* Контейнер заметки */
+.note-list-item-shell {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition: grid-template-rows 320ms ease, opacity 320ms ease;
+}
+
+/* Область, которая обрезает содержимое */
+.note-list-item-clip {
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Анимация самой заметки */
+.note-list-item {
+    transition: transform 320ms ease, opacity 320ms ease;
+}
+
+/* Состояние удаления */
+.note-list-item-shell.is-deleting {
+    grid-template-rows: 0fr;
+    opacity: 0;
+}
+
+    .note-list-item-shell.is-deleting .note-list-item {
+        transform: translateX(-110%);
+        opacity: 0;
+    }
+
+@media (prefers-reduced-motion: reduce) {
+    .note-list-item-shell,
+    .note-list-item {
+        transition-duration: 0.01ms;
+    }
+}
+/* Появление содержимого редактора */
+.note-editor {
+    animation: note-page-appear 180ms ease-out;
+}
+
+@keyframes note-page-appear {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .note-editor {
+        animation: none;
+    }
+}
