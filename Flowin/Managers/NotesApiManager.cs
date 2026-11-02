@@ -11,7 +11,7 @@ using Flowin.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Flowin.contracts;
-
+using Microsoft.Maui.Devices;
 namespace Flowin.Managers
 {
     /// <summary>
@@ -22,14 +22,26 @@ namespace Flowin.Managers
         //private UserManager<User> _userManager;UserManager<User> userManager
         private HttpClient _httpClient;
         private NotificationManager _notificationManager;
-        private string _apiUrlNotes = "http://localhost:5172/api/Notes";
-        private string _apiUrlUsers = "http://localhost:5172/api/AspNetUsers";
+        //private string _apiUrlNotes = "http://localhost:5172/api/Notes";
+        //private string _apiUrlUsers = "http://localhost:5172/api/AspNetUsers";
+        private string _apiUrlNotes;
+        private string _apiUrlUsers;
         public NotesApiManager(HttpClient hc, NotificationManager notificationManager)
         {
             //System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
             _httpClient = hc;
             _notificationManager = notificationManager;
             //_userManager = userManager;
+
+            _httpClient = hc;
+            _notificationManager = notificationManager;
+
+            string baseUrl = DeviceInfo.Platform == DevicePlatform.Android
+                ? "http://10.0.2.2:5172"
+                : "http://localhost:5172";
+
+            _apiUrlNotes = $"{baseUrl}/api/Notes";
+            _apiUrlUsers = $"{baseUrl}/api/AspNetUsers";
         }
 
         public async Task<Dictionary<Guid, DateTime>?> GetIdUpdateAt()
