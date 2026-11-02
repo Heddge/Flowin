@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Flowin.server.Data;
 using Microsoft.AspNetCore.Identity;
 using Flowin.server.Objects;
+using Flowin.server.Controllers;
 
 namespace Flowin.server
 {
@@ -37,8 +38,8 @@ namespace Flowin.server
             }
             );
 
-            var app = builder.Build();
 
+            var app = builder.Build();
             // test connecting to PostgreSQL and EFCore 
             //Note n = new Note(Guid.NewGuid(), "hellllll", "lmao");
 

@@ -38,6 +38,7 @@ namespace Flowin
             builder.Services.AddHttpClient<INotesApiManager, NotesApiManager>();
             builder.Services.AddSingleton<AuthenticationManager>();
             builder.Services.AddSingleton<UserSessionManager>();
+            builder.Services.AddSingleton<NotificationManager>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
