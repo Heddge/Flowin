@@ -1244,3 +1244,184 @@ a,
         .notes-list::-webkit-scrollbar-thumb:hover {
             background: #555555;
         }
+
+
+
+/* =========================================================
+   Sidebar Toggle
+   ========================================================= */
+
+.notes-top-actions {
+    position: fixed;
+    top: 14px;
+    left: 336px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: left 280ms ease;
+}
+
+.sidebar-toggle-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #aaaaaa;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+    .sidebar-toggle-button:hover {
+        background: #303030;
+        color: #ffffff;
+    }
+
+    .sidebar-toggle-button svg {
+        width: 21px;
+        height: 21px;
+    }
+
+/* Desktop: закрытие сайдбара */
+
+.notes-sidebar {
+    flex: 0 0 320px;
+    transition: flex-basis 280ms ease, min-width 280ms ease, padding 280ms ease;
+    overflow: hidden;
+}
+
+.notes-layout.sidebar-toggled .notes-sidebar {
+    flex-basis: 0;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.notes-layout.sidebar-toggled .notes-top-actions {
+    left: 16px;
+}
+
+/* =========================================================
+   Android / Mobile
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .notes-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 30;
+        width: 320px;
+        max-width: 85vw;
+        min-width: 0;
+        height: 100dvh;
+        transform: translateX(-105%);
+        transition: transform 280ms ease;
+        box-shadow: 8px 0 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .notes-layout.sidebar-toggled .notes-sidebar {
+        flex-basis: 320px;
+        min-width: 0;
+        padding: 28px 14px;
+        transform: translateX(0);
+    }
+
+    .notes-top-actions {
+        top: 10px;
+        left: 12px;
+    }
+
+    .notes-layout.sidebar-toggled .notes-top-actions {
+        left: 12px;
+    }
+
+    .note-editor {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .note-editor-title {
+        font-size: 32px;
+    }
+
+    .note-editor-content {
+        width: calc(100% - 40px) !important;
+        margin-left: 20px !important;
+        margin-right: 20px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notes-sidebar,
+    .notes-top-actions,
+    .sidebar-toggle-button {
+        transition-duration: 0.01ms;
+    }
+}
+
+
+/* Кнопки управления — вертикальная колонка */
+.notes-top-actions {
+    position: fixed;
+    top: 16px;
+    left: 336px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: left 280ms ease;
+}
+
+/* После скрытия сайдбара */
+.notes-layout.sidebar-toggled .notes-top-actions {
+    left: 16px;
+}
+
+/* Небольшой отступ редактора от кнопок */
+.note-editor-title {
+    margin-left: 76px !important;
+    width: calc(100% - 136px) !important;
+}
+
+/* Android */
+@media (max-width: 700px) {
+    .notes-top-actions {
+        top: 10px;
+        left: 12px;
+    }
+
+    .notes-layout.sidebar-toggled .notes-top-actions {
+        left: 12px;
+    }
+
+    .note-editor-title {
+        margin-left: 60px !important;
+        width: calc(100% - 80px) !important;
+    }
+}
+
+/* Android и iOS: кнопки редактора скрыты при открытом сайдбаре */
+@media (max-width: 700px) {
+    .note-editor-actions {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 200ms ease, visibility 200ms ease;
+    }
+
+    .notes-layout.sidebar-toggled .note-editor-actions {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+}
+
