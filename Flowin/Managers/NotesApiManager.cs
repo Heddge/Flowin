@@ -21,12 +21,14 @@ namespace Flowin.Managers
     {
         //private UserManager<User> _userManager;UserManager<User> userManager
         private HttpClient _httpClient;
+        private NotificationManager _notificationManager;
         private string _apiUrlNotes = "http://localhost:5172/api/Notes";
         private string _apiUrlUsers = "http://localhost:5172/api/AspNetUsers";
-        public NotesApiManager(HttpClient hc)
+        public NotesApiManager(HttpClient hc, NotificationManager notificationManager)
         {
             //System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
             _httpClient = hc;
+            _notificationManager = notificationManager;
             //_userManager = userManager;
         }
 
@@ -201,9 +203,9 @@ namespace Flowin.Managers
         public async Task<RequestResultStatus<User>?> CreateUser(User new_us, string p)
         {
             RegisterRequest rr = new RegisterRequest(new_us.Name, new_us.Surname, new_us.Email, p, new_us.Id);
-            System.Diagnostics.Debug.WriteLine("USEING -> " +rr.Id);
+            System.Diagnostics.Debug.WriteLine("USEING -> " + rr.Id);
 
-            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers+"/Register", rr);
+            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers + "/Register", rr);
             if (!resp.IsSuccessStatusCode)
                 return new RequestResultStatus<User>(RequestStatus.NotFound, new_us);
             return new RequestResultStatus<User>(RequestStatus.Success, new_us);
@@ -212,7 +214,7 @@ namespace Flowin.Managers
         public async Task<RequestResultStatus<User?>> Login(string email, string password)
         {
             LoginRequest lr = new LoginRequest(email, password);
-            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers+"/Login", lr);
+            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers + "/Login", lr);
             if (resp.IsSuccessStatusCode)
             {
                 var content = await resp.Content.ReadFromJsonAsync<User>();
@@ -222,6 +224,16 @@ namespace Flowin.Managers
                 return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
             }
 
+            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _notificationManager.AddErrorToQueue(
+                new Notification(404, "Проверьте введенные данные. Пользователей с такой почтой и паролем не существует.", 4));
+                await _notificationManager.ShowNotification();
+                return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
+            }
+            _notificationManager.AddErrorToQueue(
+                new Notification(500, "Отсутствует подключение к серверу (вы находитесь вне сети, или удаленный сервер выключен).", 4));
+            await _notificationManager.ShowNotification();
             return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
         }
     }

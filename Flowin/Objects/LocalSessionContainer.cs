@@ -10,21 +10,39 @@ namespace Flowin.Objects
 {
     public class LocalSessionContainer : NotesContainer
     {
-        public User CurrentUser { get; set; }
+        public User CurrentUser { get; set; } = new User("", "", "", Guid.Empty);
         private UserSessionManager _userSessionManager;
+        private Task? _initializationTask;
 
         public LocalSessionContainer(ISynchronizeManager sm, UserSessionManager usm) : base(sm)
         {
             _userSessionManager = usm;
-            CurrentUser = _userSessionManager.AuthorizedUser;
         }
         public User GetUser() => CurrentUser;
+        public async Task GetUserASync()
+        {
+            this.CurrentUser = await _userSessionManager.GetUser();
+        }
 
-        public void Unauthorize()
-            => _userSessionManager.Unauthorize();
+        public async Task Unauthorize()
+        {
+            await _userSessionManager.Unauthorize();
+            this.CurrentUser = await _userSessionManager.GetUser();
+        }
 
 
+        public Task InitializeAsync()
+        {
+            return _initializationTask ??= InitializeCoreAsync(); // если задача не создана - создать, иначе - вернуть существующую
+        }
 
+        private async Task InitializeCoreAsync()
+        {
+            await GetUserASync();
+            await GetNotesAsync(CurrentUser);
+        }
+
+        
         public async Task SetUser(User user)
         {
             this.CurrentUser = user;
@@ -34,9 +52,6 @@ namespace Flowin.Objects
 
         public async Task<List<Note>> GetNotesAsync(User curr_user)
             => this.notes = await _synchronizeManager.GetNotes(curr_user);
-
-        //public async Task GetNotesAsync(User curr_user)
-        //    => this.notes = _synchronizeManager.GetNotes();
 
         public async Task SaveNote(User curr_user, Guid id, string title, string content)
         {

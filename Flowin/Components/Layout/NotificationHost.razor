@@ -1,0 +1,76 @@
+﻿<h3>NotificationHost</h3>
+
+@implements IDisposable
+
+@inject NotificationManager _notificationManager
+
+@code {
+    private Notification? current_notification;
+
+    private void ShowNotif(Notification? notif)
+    {
+
+        InvokeAsync(() =>
+        {
+            current_notification = notif;
+            StateHasChanged();
+        }
+        );
+    }
+
+    private void EndNotif(Notification? notif)
+    {
+
+        InvokeAsync(() =>
+        {
+            current_notification = null;
+            StateHasChanged();
+        }
+        );
+    }
+
+    private string GetNotificationClass()
+    {
+        switch (current_notification?.Type)
+        {
+            case NotificationType.Success:
+                {
+                    return "notification-success";
+                }
+            case NotificationType.Information:
+                {
+                    return "notification-information";
+                }
+            case NotificationType.Warning:
+                {
+                    return "notification-warning";
+                }
+            case NotificationType.Error:
+                {
+                    return "notification-error";
+                }
+        }
+        return "notification-information";
+    }
+
+    protected override void OnInitialized()
+    {
+        _notificationManager.showing += ShowNotif;
+        _notificationManager.hiding += EndNotif;
+    }
+
+    public void Dispose()
+    {
+        _notificationManager.showing -= ShowNotif;
+        _notificationManager.hiding -= EndNotif;
+    }
+}
+
+@if (current_notification != null)
+{
+    <div class="notification-toast @GetNotificationClass()">
+        <div class="notification-content">
+            @current_notification?.Message
+        </div>
+    </div>
+}

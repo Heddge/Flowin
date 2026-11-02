@@ -374,7 +374,7 @@ a,
    Note Content
    ========================================================= */
 
-.note-editor-content {
+/*.note-editor-content {
     display: block;
     width: 100%;
     height: calc(100vh - 180px);
@@ -395,7 +395,7 @@ a,
         color: #777777;
         font-style: italic;
     }
-
+*/
 
 /* =========================================================
    Editor Action Buttons
@@ -494,11 +494,11 @@ a,
 
 
 /* Контент */
-.note-editor-content {
+/*.note-editor-content {
     width: calc(100% - 120px) !important;
     margin-left: 60px !important;
     margin-right: 60px !important;
-}
+}*/
 
 
 /* Чтобы кнопки не зависели от положения полей */
@@ -539,13 +539,13 @@ a,
    Flowin — WYSIWYG Markdown Editor
    ========================================================= */
 
-.note-editor-content {
+/*.note-editor-content {
     overflow-y: auto;
     overflow-x: hidden;
-}
+}*/
 
     /* Область редактирования ProseMirror */
-    .note-editor-content .ProseMirror {
+    /*.note-editor-content .ProseMirror {
         min-height: 100%;
         outline: none;
         color: #cfcfcf;
@@ -553,112 +553,112 @@ a,
         font-size: 17px;
         line-height: 1.7;
         overflow-wrap: anywhere;
-    }
+    }*/
 
         /* Заголовки внутри заметки */
-        .note-editor-content .ProseMirror h1,
+        /*.note-editor-content .ProseMirror h1,
         .note-editor-content .ProseMirror h2,
         .note-editor-content .ProseMirror h3 {
             color: #e5e5e5;
             line-height: 1.3;
-        }
+        }*/
 
         /* Ссылки */
-        .note-editor-content .ProseMirror a {
+        /*.note-editor-content .ProseMirror a {
             color: #a78bfa;
-        }
+        }*/
 
         /* Цитаты */
-        .note-editor-content .ProseMirror blockquote {
+        /*.note-editor-content .ProseMirror blockquote {
             border-left: 3px solid #68469b;
             margin-left: 0;
             padding-left: 16px;
             color: #aaaaaa;
-        }
+        }*/
 
         /* Блоки кода */
-        .note-editor-content .ProseMirror pre {
+        /*.note-editor-content .ProseMirror pre {
             overflow-x: auto;
             padding: 12px;
             border-radius: 8px;
             background: #242424;
             color: #dddddd;
-        }
+        }*/
 
         /* Выделение текста */
-        .note-editor-content .ProseMirror ::selection {
+        /*.note-editor-content .ProseMirror ::selection {
             background: #68469b;
             color: #ffffff;
-        }
+        }*/
 
 /* Цвет и читаемость Markdown-редактора */
-.note-editor-content {
+/*.note-editor-content {
     background: #1c1c1c;
     color: #ffffff;
-}
+}*/
 
     /* Основное содержимое редактора */
-    .note-editor-content .ProseMirror {
+    /*.note-editor-content .ProseMirror {
         background: transparent;
         color: #ffffff;
-    }
+    }*/
 
         /* Заголовки */
-        .note-editor-content .ProseMirror h1,
+        /*.note-editor-content .ProseMirror h1,
         .note-editor-content .ProseMirror h2,
         .note-editor-content .ProseMirror h3 {
             color: #ffffff;
-        }
+        }*/
 
         /* Обычные абзацы и списки */
-        .note-editor-content .ProseMirror p,
+        /*.note-editor-content .ProseMirror p,
         .note-editor-content .ProseMirror li {
             color: #ffffff;
-        }
+        }*/
 
             /* Подсказки редактора, если библиотека их использует */
-            .note-editor-content .ProseMirror p.is-editor-empty:first-child::before {
+            /*.note-editor-content .ProseMirror p.is-editor-empty:first-child::before {
                 color: #888888;
-            }
+            }*/
 
 
 /* Скругление поля редактора */
-.note-editor-content {
+/*.note-editor-content {
     border-radius: 8px;
     overflow: hidden;
-}
+}*/
 
     /* Отступ текста от скруглённых краёв */
-    .note-editor-content .ProseMirror {
+    /*.note-editor-content .ProseMirror {
         padding: 12px;
         box-sizing: border-box;
-    }
+    }*/
 
         /* Тёмная тема для таблиц Markdown */
-        .note-editor-content .ProseMirror table {
+        /*.note-editor-content .ProseMirror table {
             border-collapse: collapse;
             background: transparent;
             color: #ffffff;
-        }
+        }*/
 
         /* Заголовочная строка таблицы */
-        .note-editor-content .ProseMirror th {
+        /*.note-editor-content .ProseMirror th {
             background-color: #242424;
             color: #ffffff;
-        }
+        }*/
 
         /* Обычные ячейки */
-        .note-editor-content .ProseMirror td {
+        /*.note-editor-content .ProseMirror td {
             background-color: #1c1c1c;
             color: #ffffff;
-        }
+        }*/
 
         /* Границы таблицы */
-        .note-editor-content .ProseMirror th,
+        /*.note-editor-content .ProseMirror th,
         .note-editor-content .ProseMirror td {
             border: 1px solid #3a3a3a;
             padding: 8px 12px;
-        }
+        }*/
 
 /* Основная область заметки прокручивается целиком */
 .note-editor {
@@ -674,12 +674,12 @@ a,
 }
 
 /* Редактор занимает место по содержимому */
-.note-editor-content {
+/*.note-editor-content {
     height: auto !important;
     min-height: calc(100vh - 220px);
     overflow: visible !important;
     flex-shrink: 0;
-}
+}*/
 
 /* Кнопки остаются в потоке страницы */
 .note-editor-actions {
@@ -712,35 +712,35 @@ a,
         }
 
 /* Меню команд Markdown — тёмная тема Flowin */
-.note-editor-content .slash-menu,
+/*.note-editor-content .slash-menu,
 .note-editor-content [role="menu"] {
     background: #202020;
     color: #ffffff;
     border: 1px solid #383838;
     border-radius: 10px;
     box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
-}
+}*/
 
     /* Пункты меню */
-    .note-editor-content .slash-menu button,
+    /*.note-editor-content .slash-menu button,
     .note-editor-content [role="menu"] [role="menuitem"] {
         background: transparent;
         color: #e5e5e5;
         border-radius: 6px;
-    }
+    }*/
 
         /* Наведение и выбранный пункт */
-        .note-editor-content .slash-menu button:hover,
+        /*.note-editor-content .slash-menu button:hover,
         .note-editor-content [role="menu"] [role="menuitem"]:hover {
             background: #303030;
             color: #ffffff;
-        }
+        }*/
 
     /* Второстепенные подписи и описания */
-    .note-editor-content .slash-menu small,
+    /*.note-editor-content .slash-menu small,
     .note-editor-content .slash-menu p {
         color: #a0a0a0;
-    }
+    }*/
 
 
 /* =========================================================
@@ -1024,3 +1024,223 @@ a,
         stroke-linejoin: round;
     }
 
+.account-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+}
+
+    .account-chevron svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .account-chevron.rotated {
+        transform: rotate(180deg);
+    }
+
+/* Контейнер Markdown-редактора */
+.note-editor-content {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 120px) !important;
+    margin: 0 60px !important;
+    min-height: calc(100vh - 220px);
+    height: auto;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    background: #171717;
+    color: #ffffff;
+    overflow: visible;
+    flex-shrink: 0;
+}
+
+    /* Непосредственная область ввода ProseMirror */
+    .note-editor-content .ProseMirror {
+        flex: 1;
+        min-height: calc(100vh - 244px);
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        outline: none;
+        background: transparent;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 17px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+        cursor: text;
+    }
+
+        /* Заголовки */
+        .note-editor-content .ProseMirror h1,
+        .note-editor-content .ProseMirror h2,
+        .note-editor-content .ProseMirror h3 {
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        /* Абзацы и списки */
+        .note-editor-content .ProseMirror p,
+        .note-editor-content .ProseMirror li {
+            color: #ffffff;
+        }
+
+        /* Ссылки */
+        .note-editor-content .ProseMirror a {
+            color: #a78bfa;
+        }
+
+        /* Цитаты */
+        .note-editor-content .ProseMirror blockquote {
+            border-left: 3px solid #68469b;
+            margin-left: 0;
+            padding-left: 16px;
+            color: #aaaaaa;
+        }
+
+        /* Код */
+        .note-editor-content .ProseMirror pre {
+            overflow-x: auto;
+            padding: 12px;
+            border-radius: 8px;
+            background: #242424;
+            color: #dddddd;
+        }
+
+        /* Выделение */
+        .note-editor-content .ProseMirror ::selection {
+            background: #68469b;
+            color: #ffffff;
+        }
+
+        /* Таблицы */
+        .note-editor-content .ProseMirror table {
+            border-collapse: collapse;
+            background: transparent;
+            color: #ffffff;
+        }
+
+        .note-editor-content .ProseMirror th,
+        .note-editor-content .ProseMirror td {
+            border: 1px solid #3a3a3a;
+            padding: 8px 12px;
+        }
+
+        .note-editor-content .ProseMirror th {
+            background: #242424;
+        }
+
+        .note-editor-content .ProseMirror td {
+            background: transparent;
+        }
+
+/* Контейнер заметки */
+.note-list-item-shell {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition: grid-template-rows 320ms ease, opacity 320ms ease;
+}
+
+/* Область, которая обрезает содержимое */
+.note-list-item-clip {
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Анимация самой заметки */
+.note-list-item {
+    transition: transform 320ms ease, opacity 320ms ease;
+}
+
+/* Состояние удаления */
+.note-list-item-shell.is-deleting {
+    grid-template-rows: 0fr;
+    opacity: 0;
+}
+
+    .note-list-item-shell.is-deleting .note-list-item {
+        transform: translateX(-110%);
+        opacity: 0;
+    }
+
+@media (prefers-reduced-motion: reduce) {
+    .note-list-item-shell,
+    .note-list-item {
+        transition-duration: 0.01ms;
+    }
+}
+/* Появление содержимого редактора */
+.note-editor {
+    animation: note-page-appear 180ms ease-out;
+}
+
+@keyframes note-page-appear {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .note-editor {
+        animation: none;
+    }
+}
+.notes-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Список заметок занимает свободное пространство */
+.notes-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Блок аккаунта всегда остаётся снизу */
+.sidebar-account {
+    flex-shrink: 0;
+    margin-top: auto;
+    position: relative;
+    z-index: 2;
+    background: inherit;
+}
+/* Тёмный скроллбар Firefox */
+.notes-list {
+    scrollbar-width: thin;
+    scrollbar-color: #454545 #171717;
+}
+
+    /* Тёмный скроллбар Chromium / WebView */
+    .notes-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .notes-list::-webkit-scrollbar-track {
+        background: #171717;
+    }
+
+    .notes-list::-webkit-scrollbar-thumb {
+        background: #383838;
+        border-radius: 8px;
+        border: 2px solid #171717;
+    }
+
+        .notes-list::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }

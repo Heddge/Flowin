@@ -14,64 +14,85 @@
     [Parameter]
     public Guid? id { get; set; }
 
-    // User currUser = _localSessionContainer.GetUser();
+    private string? pendingNewNoteAnimationId;
+
+
     private bool isEditing = false;
     private bool isAuthorized = false;
-    private Note n = new Note(Guid.Empty, Guid.Empty, "", "");
+    private Note current_note = new Note(Guid.Empty, Guid.Empty, "", "");
+    private User current_user = new User();
     private List<Note> notes = new List<Note>();
-    User curr_user = new User();
 
-    protected override void OnParametersSet()
+    private HashSet<Guid> deletingNotes = new();
+
+    protected override async void OnParametersSet()
     {
-        // System.Diagnostics.Debug.WriteLine("onparameterset page entered");
         isEditing = false;
-
-        curr_user = _localSessionContainer.GetUser();
-        if (curr_user.Id != Guid.Empty)
+        current_user = _localSessionContainer.GetUser();
+        if (current_user.Id != Guid.Empty)
         {
             isAuthorized = true;
-            n.OwnerId = curr_user.Id;
+            current_note.OwnerId = current_user.Id;
         }
-        if (id.HasValue && id.Value != Guid.Empty)
+        else
+            current_note.OwnerId = Guid.Empty;
+
+        notes = await _localSessionContainer.GetNotesAsync(current_user);
+
+        if (id.HasValue && id != null)
         {
-            var foundNote = _localSessionContainer.GetNotes().FirstOrDefault(x => x.Id == id);
+            var foundNote = notes.FirstOrDefault(x => x.Id == id);
             if (foundNote != null)
             {
-                n = foundNote;
+                current_note = foundNote;
+                System.Diagnostics.Debug.WriteLine("CURRENT NOTE ID -> " + current_note.Id);
                 isEditing = true;
                 return;
             }
         }
-        n = new Note(Guid.Empty, _localSessionContainer.GetId(), "", "");
-        id = n.Id;
+
+        current_note = new Note(Guid.Empty, _localSessionContainer.GetId(), "", "");
+        id = current_note.Id;
+        System.Diagnostics.Debug.WriteLine("CURRENT NOTE ID -> " + current_note.Id);
+
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        await SynchronizateIt();
+        // await SynchronizateIt();
+        return Task.CompletedTask;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (pendingNewNoteAnimationId != null)
+        {
+            string noteId = pendingNewNoteAnimationId;
+            pendingNewNoteAnimationId = null;
+
+            await JS.InvokeVoidAsync(
+                "flowinNoteListAnimation.animate",
+                noteId);
+        }
         if (markdownEditorId == null)
         {
             markdownEditorId = await JS.InvokeAsync<string>(
                 "blazorMarkdownEditor.create",
                 markdownEditorElement,
-                new { markdown = n.Content ?? "" });
+                new { markdown = current_note.Content ?? "" });
 
-            editorNoteId = n.Id;
+            editorNoteId = current_note.Id;
             return;
         }
 
-        if (editorNoteId != n.Id)
+        if (editorNoteId != current_note.Id)
         {
             await JS.InvokeVoidAsync(
                 "blazorMarkdownEditor.setMarkdown",
                 markdownEditorId,
-                n.Content ?? "");
+                current_note.Content ?? "");
 
-            editorNoteId = n.Id;
+            editorNoteId = current_note.Id;
         }
     }
 
@@ -82,42 +103,58 @@
         showUserMenu = !showUserMenu;
     }
 
-    private void Logout()
+    private async Task Logout()
     {
         _localSessionContainer.Unauthorize();
         showUserMenu = false;
+        current_note = new Note(Guid.Empty, Guid.Empty, "", "");
+        notes = await _localSessionContainer.GetNotesAsync(current_user);
         Navigation.NavigateTo("/login");
     }
 
     private async Task HandleSave()
     {
-
-        if (n == null) return;
+        if (current_note == null) return;
 
         if (markdownEditorId != null)
         {
-            n.Content = await JS.InvokeAsync<string>(
+            current_note.Content = await JS.InvokeAsync<string>(
                 "blazorMarkdownEditor.getMarkdown",
                 markdownEditorId);
         }
 
         if (!isEditing)
         {
+            // Запоминаем позиции существующих заметок
+            await JS.InvokeVoidAsync("flowinNoteListAnimation.capture");
+
             if (isAuthorized)
-                await _localSessionContainer.SaveNote(curr_user, n.Id, n.Title, n.Content);
+                await _localSessionContainer.SaveNote(
+                    current_user,
+                    current_note.Id,
+                    current_note.Title,
+                    current_note.Content);
             else
-                await _localSessionContainer.SaveNote(n.Id, n.Title, n.Content);
+                await _localSessionContainer.SaveNote(
+                    current_note.Id,
+                    current_note.Title,
+                    current_note.Content);
+
             isEditing = true;
-            Navigation.NavigateTo($"/note-editor/{n.Id}");
+
+            // Запоминаем ID новой заметки для последующей анимации
+            pendingNewNoteAnimationId = current_note.Id.ToString();
+
+            Navigation.NavigateTo($"/note-editor/{current_note.Id}");
         }
         else
         {
             if (isAuthorized)
-                await _localSessionContainer.UpdateNote(curr_user, n);
+                await _localSessionContainer.UpdateNote(current_user, current_note);
             else
-                await _localSessionContainer.UpdateNote(n);
+                await _localSessionContainer.UpdateNote(current_note);
             isEditing = true;
-            Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
+            Navigation.NavigateTo($"/note-editor/{(Guid)current_note.Id}");
         }
 
     }
@@ -140,21 +177,52 @@
         await _localSessionContainer.GetNotesAsync();
 
         notes = _localSessionContainer.GetNotes();
-        if (n.Id != Guid.Empty)
+        if (current_note.Id != Guid.Empty)
         {
-            Navigation.NavigateTo($"/note-editor/{(Guid)n.Id}");
+            Navigation.NavigateTo($"/note-editor/{(Guid)current_note.Id}");
             return;
         }
         Navigation.NavigateTo("/");
     }
 
+    // public async Task Delete(Guid noteid)
+    // {
+    //     System.Diagnostics.Debug.WriteLine("CURRENT NOTE ID -> " +  noteid);
+    //     if (noteid == Guid.Empty) return;
+    //     await _localSessionContainer.DeleteNote(current_user, (Guid)noteid);
+    //     id = null;
+    //     isEditing = false;
+    //     Navigation.NavigateTo($"/");
+    // }
     public async Task Delete(Guid noteid)
     {
-        if (noteid == Guid.Empty) return;
-        await _localSessionContainer.DeleteNote((Guid)noteid);
-        id = null;
-        isEditing = false;
-        Navigation.NavigateTo($"/");
+        if (noteid == Guid.Empty || !deletingNotes.Add(noteid))
+            return;
+
+        bool deletingCurrentNote = current_note.Id == noteid;
+
+        await InvokeAsync(StateHasChanged);
+
+        await Task.Delay(320);
+
+        try
+        {
+            await _localSessionContainer.DeleteNote(current_user, noteid);
+
+            notes.RemoveAll(x => x.Id == noteid);
+        }
+        finally
+        {
+            deletingNotes.Remove(noteid);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        if (deletingCurrentNote)
+        {
+            id = null;
+            isEditing = false;
+            Navigation.NavigateTo("/");
+        }
     }
 }
 
@@ -191,33 +259,41 @@
             @if (_localSessionContainer.GetNotes() != null)
             {
                 if (id == null) id = Guid.Empty;
-                if (isAuthorized)
-                    _localSessionContainer.GetNotesAsync(curr_user);
-                @* System.Diagnostics.Debug.WriteLine("rendering page entered"); *@
-                foreach (Note note in _localSessionContainer.GetNotes().OrderByDescending(x => x.UpdatedAt))
+                @foreach (Note note in notes.OrderByDescending(x => x.UpdatedAt))
                 {
                     if (note == null) continue;
 
-                    <div class="note-list-item @(n?.Id == note.Id ? "active" : "")"
-                         @onclick="@(() => Navigation.NavigateTo($"/note-editor/{(Guid)note.Id}"))">
+                    <div @key="note.Id"
+                         data-note-id="@note.Id"
+                         class="note-list-item-shell @(deletingNotes.Contains(note.Id) ? "is-deleting" : "")">
 
-                        <div class="note-list-icon">N</div>
+                        <div class="note-list-item-clip">
 
-                        <span class="note-list-title">@note.Title</span>
+                            <div class="note-list-item"
+                                 @onclick="@(() => Navigation.NavigateTo($"/note-editor/{note.Id}"))">
 
-                        <button class="note-delete-button"
-                                title="Удалить"
-                                @onclick="() => Delete((Guid)note.Id)"
-                                @onclick:stopPropagation="true">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M4 7h16" />
-                                <path d="M10 11v6" />
-                                <path d="M14 11v6" />
-                                <path d="M6 7l1 14h10l1-14" />
-                                <path d="M9 7V4h6v3" />
-                            </svg>
-                        </button>
+                                <div class="note-list-icon">N</div>
 
+                                <span class="note-list-title">@note.Title</span>
+
+                                <button class="note-delete-button"
+                                        title="Удалить"
+                                        @onclick="() => Delete(note.Id)"
+                                        @onclick:stopPropagation="true">
+
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M4 7h16" />
+                                        <path d="M10 11v6" />
+                                        <path d="M14 11v6" />
+                                        <path d="M6 7l1 14h10l1-14" />
+                                        <path d="M9 7V4h6v3" />
+                                    </svg>
+
+                                </button>
+
+                            </div>
+
+                        </div>
                     </div>
                 }
             }
@@ -231,12 +307,28 @@
                 <div class="account-menu">
                     <button class="account-logout-button"
                             @onclick="Logout">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M10 17l5-5-5-5" />
-                            <path d="M15 12H3" />
-                            <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" />
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            @if (isAuthorized)
+                            {
+                                <path d="M10 17l5-5-5-5" />
+                                <path d="M15 12H3" />
+                                <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" />
+                            }
+                            else
+                            {
+                                <path d="M14 17l-5-5 5-5" />
+                                <path d="M9 12h12" />
+                                <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7" />
+                            }
                         </svg>
-                        Выйти
+
+                        @(isAuthorized ? "Выйти" : "Войти")
                     </button>
                 </div>
             }
@@ -253,17 +345,22 @@
                 </span>
 
                 <span class="account-name">
-                    @_localSessionContainer.CurrentUser.Email
+                    @(isAuthorized? _localSessionContainer.CurrentUser.Name : "Войдите для синхронизации")
                 </span>
 
-                <span class="account-chevron">
-                    @(showUserMenu ? "⌄" : "⌃")
+                <span class="account-chevron @(showUserMenu ? "rotated" : "")">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
                 </span>
 
             </button>
-
         </div>
-
     </aside>
 
 
@@ -271,13 +368,13 @@
     <main class="note-editor">
 
         <input class="note-editor-title"
-               @bind="@n.Title"
+               @bind="@current_note.Title"
                placeholder="Новая заметка" />
 
         <div class="note-editor-content"
              @ref="markdownEditorElement"
              spellcheck="false">
-         </div>
+        </div>
 
         <div class="note-editor-actions">
 
@@ -289,7 +386,7 @@
                 </svg>
             </button>
 
-            <button class="note-editor-button" title="Удалить" @onclick="() => Delete((Guid)id)">
+            <button class="note-editor-button" title="Удалить" @onclick="() => Delete(current_note.Id)">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 7h16" />
                     <path d="M10 11v6" />

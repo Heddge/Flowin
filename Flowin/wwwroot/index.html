@@ -1,31 +1,141 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
     <title>Flowin</title>
     <base href="/" />
+
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="Flowin.styles.css" />
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="blazor-markdown-editor.css" />
+
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: #111014;
+            overflow: hidden;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+        }
+
+        .startup-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #111014;
+            color: #f2eff7;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .startup-content {
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .startup-logo {
+            font-size: 58px;
+            font-weight: 700;
+            letter-spacing: -5px;
+            color: #a78bfa;
+            line-height: 1;
+            margin-bottom: 14px;
+        }
+
+        .startup-brand {
+            font-size: 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .startup-description {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #898492;
+        }
+
+        .startup-progress {
+            width: 180px;
+            height: 3px;
+            margin-top: 30px;
+            background: #29252f;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .startup-progress-bar {
+            width: 40%;
+            height: 100%;
+            background: #a78bfa;
+            border-radius: 10px;
+            animation: startup-loading 1.4s ease-in-out infinite;
+        }
+
+        @keyframes startup-loading {
+            0% {
+                transform: translateX(-110%);
+            }
+
+            100% {
+                transform: translateX(360%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .startup-progress-bar {
+                animation: none;
+                width: 60%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="status-bar-safe-area"></div>
 
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div class="startup-screen">
+            <div class="startup-content">
+
+                <div class="startup-logo">F.</div>
+
+                <div class="startup-brand">Flowin</div>
+
+                <div class="startup-description">
+                    Подготавливаем ваше пространство
+                </div>
+
+                <div class="startup-progress">
+                    <div class="startup-progress-bar"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <script src="js/flowin-note-animation.js"></script>
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="blazor-markdown-editor.min.js"></script>
     <script src="_framework/blazor.webview.js" autostart="false"></script>
 
 </body>
-
 </html>
