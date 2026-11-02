@@ -1,0 +1,49 @@
+
+.notification-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10000;
+    min-width: 280px;
+    max-width: 380px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: #24212e;
+    border: 1px solid #66518a;
+    color: #f2eff8;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    animation: notification-appear 0.25s ease-out;
+}
+
+.notification-content {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@keyframes notification-appear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-success {
+    border: 1px solid #3ba875;
+}
+
+.notification-information {
+    border: 1px solid #4389d6;
+}
+
+.notification-warning {
+    border: 1px solid #d6aa3f;
+}
+
+.notification-error {
+    border: 1px solid #d65353;
+}

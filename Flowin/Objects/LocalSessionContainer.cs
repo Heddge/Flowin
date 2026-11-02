@@ -53,9 +53,6 @@ namespace Flowin.Objects
         public async Task<List<Note>> GetNotesAsync(User curr_user)
             => this.notes = await _synchronizeManager.GetNotes(curr_user);
 
-        //public async Task GetNotesAsync(User curr_user)
-        //    => this.notes = _synchronizeManager.GetNotes();
-
         public async Task SaveNote(User curr_user, Guid id, string title, string content)
         {
             Note n = new Note(curr_user.Id, id, title, content);
