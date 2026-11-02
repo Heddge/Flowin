@@ -12,8 +12,8 @@
 
     private async Task Registration()
     {
-        await authManager.Registration(name, surname, email, password, second_password);
-        Navigation.NavigateTo("/login");
+        var resp = await authManager.Registration(name, surname, email, password, second_password);
+        if (resp) Navigation.NavigateTo("/login");
     }
 
     private void GoToLogin()
