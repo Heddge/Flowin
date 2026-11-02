@@ -12,14 +12,19 @@ namespace Flowin.Managers
     {
         private INoteDbManager _noteDbManager;
         private INotesApiManager _notesApiManager;
+        private NotificationManager _notificationManager;
         private SemaphoreSlim _semaphoreSlim;
 
-        public SynchronizeManager(INoteDbManager ndm, INotesApiManager nam)
+        public SynchronizeManager(INoteDbManager ndm, INotesApiManager nam, NotificationManager nfm)
         {
             _noteDbManager = ndm;
             _notesApiManager = nam;
+            _notificationManager = nfm;
             _semaphoreSlim = new SemaphoreSlim(1);
         }
+
+        private async Task<bool> IsServerAvaliable()
+            => await _notesApiManager.IsAvaliable();
 
         /// <summary>
         /// Deleting Deleted in SQL notes in PostgreSQL
@@ -161,16 +166,26 @@ namespace Flowin.Managers
         /// <returns></returns>
         public async Task Synchronize()
         {
+            if (!(await IsServerAvaliable()))
+            {
+                _notificationManager.AddErrorToQueue(
+                    new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                await _notificationManager.ShowNotification();
+                return;
+            }
             try
             {
+                System.Diagnostics.Debug.WriteLine("SYNCHRONIZATION STARTED");
                 await _semaphoreSlim.WaitAsync();
                 await SynchronizeDeleted().ConfigureAwait(false);
                 await SynchronizeUpdated().ConfigureAwait(false);
                 await SynchronizeAll().ConfigureAwait(false);
                 await SynchronizeCreated().ConfigureAwait(false);
+                System.Diagnostics.Debug.WriteLine("SYNCHRONIZATION ENDING");
             }
             finally
             {
+                System.Diagnostics.Debug.WriteLine("SYNCHRONIZATION FINALLY");
                 _semaphoreSlim.Release();
             }
         }
@@ -215,13 +230,13 @@ namespace Flowin.Managers
         {
             _noteDbManager.UpdateNote(note);
             //if (!_noteDbManager.IsThereAnyStatus(note.Id))
-                //_noteDbManager.AddSyncStatus(new SyncStatus(note.Id, Guid.Empty, 2));
+            //_noteDbManager.AddSyncStatus(new SyncStatus(note.Id, Guid.Empty, 2));
 
 
             //if (await _notesApiManager.UpdateNote(note) != null)
             //{
-                //_noteDbManager.DeleteSyncStatus(note.Id);
-                //return true;
+            //_noteDbManager.DeleteSyncStatus(note.Id);
+            //return true;
             //}
 
             return true;
@@ -248,22 +263,22 @@ namespace Flowin.Managers
             _noteDbManager.DeleteNote(n);
 
             //if (!_noteDbManager.IsThereAnyStatus(n.Id))
-                //_noteDbManager.AddSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
+            //_noteDbManager.AddSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
             //else
             //{
-                //if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
-                //{
-                    //_noteDbManager.DeleteSyncStatus(n.Id);
-                    //return true;
-                //}
-                //else
-                    //_noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
+            //if (_noteDbManager.GetSyncStatus(n.Id)?.Status == OperationStatus.Created)
+            //{
+            //_noteDbManager.DeleteSyncStatus(n.Id);
+            //return true;
+            //}
+            //else
+            //_noteDbManager.UpdateSyncStatus(new SyncStatus(n.Id, Guid.Empty, 3));
             //}
 
             //if (await _notesApiManager.DeleteNote(n.Id))
-                //_noteDbManager.DeleteSyncStatus(n.Id);
+            //_noteDbManager.DeleteSyncStatus(n.Id);
             //else
-                //return false;
+            //return false;
 
             return true;
         }

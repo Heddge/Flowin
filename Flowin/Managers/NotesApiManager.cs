@@ -2,16 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 using Flowin.Objects;
-using Microsoft.AspNetCore;
 using System.Text.Json;
 using Flowin.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Flowin.contracts;
-using Microsoft.Maui.Devices;
 namespace Flowin.Managers
 {
     /// <summary>
@@ -30,6 +24,7 @@ namespace Flowin.Managers
         {
             //System.Diagnostics.Debug.WriteLine("notesapimaanager constructor entered");
             _httpClient = hc;
+            _httpClient.Timeout = TimeSpan.FromSeconds(3);
             _notificationManager = notificationManager;
             //_userManager = userManager;
 
@@ -42,6 +37,21 @@ namespace Flowin.Managers
 
             _apiUrlNotes = $"{baseUrl}/api/Notes";
             _apiUrlUsers = $"{baseUrl}/api/AspNetUsers";
+        }
+
+        public async Task<bool> IsAvaliable()
+        {
+            try
+            {
+                var resp = await _httpClient.GetAsync(_apiUrlNotes);
+                if (resp != null) return true;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return false;
+            }
         }
 
         public async Task<Dictionary<Guid, DateTime>?> GetIdUpdateAt()

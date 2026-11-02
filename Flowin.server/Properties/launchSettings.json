@@ -21,3 +21,5 @@
     }
   }
 }
+
+//dotnet run --launch-profile http

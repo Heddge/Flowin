@@ -9,6 +9,8 @@ namespace Flowin.Interfaces
     /// </summary>
     public interface INotesApiManager
     {
+        Task<bool> IsAvaliable();
+
         /// <summary>
         /// Getting Dictionary of Ids and UpdatedAt timestamps from server`s DB
         /// </summary>
