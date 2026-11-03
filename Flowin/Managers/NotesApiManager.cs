@@ -45,10 +45,16 @@ namespace Flowin.Managers
             {
                 var resp = await _httpClient.GetAsync(_apiUrlNotes);
                 if (resp != null) return true;
+                _notificationManager.AddErrorToQueue(
+                    new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                await _notificationManager.ShowNotification();
                 return false;
             }
             catch (Exception ex)
             {
+                _notificationManager.AddErrorToQueue(
+                    new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                await _notificationManager.ShowNotification();
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return false;
             }
@@ -236,27 +242,36 @@ namespace Flowin.Managers
         public async Task<RequestResultStatus<User?>> Login(string email, string password)
         {
             LoginRequest lr = new LoginRequest(email, password);
-            var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers + "/Login", lr);
-            if (resp.IsSuccessStatusCode)
+            try
             {
-                var content = await resp.Content.ReadFromJsonAsync<User>();
-                if (content != null)
-                    return new RequestResultStatus<User?>(RequestStatus.Success, content);
+                var resp = await _httpClient.PostAsJsonAsync(_apiUrlUsers + "/Login", lr);
+                if (resp.IsSuccessStatusCode)
+                {
+                    var content = await resp.Content.ReadFromJsonAsync<User>();
+                    if (content != null)
+                        return new RequestResultStatus<User?>(RequestStatus.Success, content);
 
-                return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
-            }
+                    return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
+                }
 
-            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
+                if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _notificationManager.AddErrorToQueue(
+                    new Notification(404, "Проверьте введенные данные. Пользователей с такой почтой и паролем не существует.", 4));
+                    await _notificationManager.ShowNotification();
+                    return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
+                }
                 _notificationManager.AddErrorToQueue(
-                new Notification(404, "Проверьте введенные данные. Пользователей с такой почтой и паролем не существует.", 4));
+                    new Notification(500, "Отсутствует подключение к серверу (вы находитесь вне сети, или удаленный сервер выключен).", 4));
                 await _notificationManager.ShowNotification();
                 return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
             }
-            _notificationManager.AddErrorToQueue(
-                new Notification(500, "Отсутствует подключение к серверу (вы находитесь вне сети, или удаленный сервер выключен).", 4));
-            await _notificationManager.ShowNotification();
-            return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return new RequestResultStatus<User?>(RequestStatus.NotFound, null);
+
+            }
         }
     }
 }

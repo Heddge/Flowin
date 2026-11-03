@@ -43,11 +43,32 @@ namespace Flowin.Managers
                 return false;
             }
 
-            User new_user = new User(name, surname, email, Guid.NewGuid());
+            if (await notesApiManager.IsAvaliable())
+            {
+                try
+                {
+                    User new_user = new User(name, surname, email, Guid.NewGuid());
 
-            await notesApiManager.CreateUser(new_user, password);
-            return true;
-        }
+                    await notesApiManager.CreateUser(new_user, password);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+
+                    _notificationmanager.AddErrorToQueue(
+                            new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                    await _notificationmanager.ShowNotification();
+                    return false;
+                }
+            }
+            else
+            {
+                _notificationmanager.AddErrorToQueue(
+                        new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                await _notificationmanager.ShowNotification();
+                return false;
+            }
+            }
 
         public async Task<User?> Logining(string email, string password)
         {
@@ -60,15 +81,36 @@ namespace Flowin.Managers
                 return null;
             }
 
-            var response = await notesApiManager.Login(email, password);
-            if (response == null)
+            if (await notesApiManager.IsAvaliable())
+            {
+                try
+                {
+                    var response = await notesApiManager.Login(email, password);
+                    if (response == null)
+                    {
+                        _notificationmanager.AddErrorToQueue(
+                            new Notification(500, "Что-то пошло не так. Повторите попытку.", 4));
+                        await _notificationmanager.ShowNotification();
+                        return null;
+                    }
+                    return response.data;
+                }
+                catch (Exception ex)
+                {
+
+                    _notificationmanager.AddErrorToQueue(
+                            new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                    await _notificationmanager.ShowNotification();
+                    return null;
+                }
+            }
+            else
             {
                 _notificationmanager.AddErrorToQueue(
-                    new Notification(500, "Что-то пошло не так. Повторите попытку.", 4));
+                        new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
                 await _notificationmanager.ShowNotification();
                 return null;
             }
-                return response.data;
         }
     }
 }

@@ -24,7 +24,25 @@ namespace Flowin.Managers
         }
 
         private async Task<bool> IsServerAvaliable()
-            => await _notesApiManager.IsAvaliable();
+        {
+            try
+            {
+                if (await _notesApiManager.IsAvaliable())
+                    return true;
+                _notificationManager.AddErrorToQueue(
+                    new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                await _notificationManager.ShowNotification();
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _notificationManager.AddErrorToQueue(
+                    new Notification(500, "Сервер недоступен. Повторите попытку позже", 4));
+                await _notificationManager.ShowNotification();
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return false;
+            }
+        }
 
         /// <summary>
         /// Deleting Deleted in SQL notes in PostgreSQL
