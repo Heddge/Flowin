@@ -1,0 +1,1 @@
+ConnectionStrings__NotesDatabase="Host=localhost;Port=5433;Database=yourdbname;Username=yourdbusname;Password=yourdbpassword"
