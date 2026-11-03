@@ -21,15 +21,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
-
+		<SatelliteResourceLanguages>en;ru</SatelliteResourceLanguages>
         <!-- Display name -->
         <ApplicationTitle>Flowin</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.flowin</ApplicationId>
+        <ApplicationId>com.heddge.flowin</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
         <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
@@ -82,5 +82,24 @@
     <ItemGroup>
       <ProjectReference Include="..\Flowin.contracts\Flowin.contracts.csproj" />
     </ItemGroup>
+	<Target Name="DeleteUnneededLanguageFolders" AfterTargets="Publish">
+		<ItemGroup>
+			<_PublishSubDirectories Include="$([System.IO.Directory]::GetDirectories('$(PublishDir)'))" />
 
+			<_FoldersToRemove Include="@(_PublishSubDirectories)"
+				Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Identity)', '[/\\](?!.*(en-US|ru-RU))([a-z]{2,3}(-[A-Za-z]+)?(-[A-Z]+)?)$'))" />
+		</ItemGroup>
+
+		<RemoveDir Directories="@(_FoldersToRemove)" />
+
+		<Message Text="Removed language folders: @(_FoldersToRemove)" Importance="high" />
+	</Target>
+	<PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidPackageFormats>apk</AndroidPackageFormats>
+		<AndroidSigningKeyStore>$(USERPROFILE)\FlowinSigning\flowin-release.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>flowin</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>env:FlowinSigningPassword</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>env:FlowinSigningPassword</AndroidSigningStorePass>
+	</PropertyGroup>
 </Project>

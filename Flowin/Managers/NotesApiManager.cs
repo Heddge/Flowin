@@ -32,7 +32,7 @@ namespace Flowin.Managers
             _notificationManager = notificationManager;
 
             string baseUrl = DeviceInfo.Platform == DevicePlatform.Android
-                ? "http://10.0.2.2:5172"
+                ? "http://192.168.1.17:5172"
                 : "http://localhost:5172";
 
             _apiUrlNotes = $"{baseUrl}/api/Notes";
