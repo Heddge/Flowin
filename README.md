@@ -164,8 +164,7 @@ Run the `Flowin.server` project and then launch the `Flowin` client application.
 | Platform | Status |
 |---|---|
 | Windows | Implemented and tested |
-| Android | Planned |
-| iOS | Planned |
+| Android | Implemented and tested |
 
 ## License
 
