@@ -14,7 +14,7 @@ The project consists of a client application, an ASP.NET Core backend, shared AP
 - **User authentication** — user accounts and isolated user data.
 - **Markdown editor** — WYSIWYG editing experience with Markdown support.
 - **In-app notifications** — centralized notification management with a queue, history, and automatic dismissal.
-- **Cross-platform architecture** — designed for Windows, Android, and iOS.
+- **Cross-platform architecture** — designed for Windows and Android.
 
 ## Tech Stack
 
