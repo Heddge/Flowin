@@ -175,17 +175,14 @@ namespace Flowin.Managers
             }
             try
             {
-                System.Diagnostics.Debug.WriteLine("SYNCHRONIZATION STARTED");
                 await _semaphoreSlim.WaitAsync();
                 await SynchronizeDeleted().ConfigureAwait(false);
                 await SynchronizeUpdated().ConfigureAwait(false);
                 await SynchronizeAll().ConfigureAwait(false);
                 await SynchronizeCreated().ConfigureAwait(false);
-                System.Diagnostics.Debug.WriteLine("SYNCHRONIZATION ENDING");
             }
             finally
             {
-                System.Diagnostics.Debug.WriteLine("SYNCHRONIZATION FINALLY");
                 _semaphoreSlim.Release();
             }
         }

@@ -1,0 +1,5 @@
+POSTGRES_DB=yourdb
+POSTGRES_USER=yourdbuser
+POSTGRES_PASSWORD=yourdbpassword
+
+//when you enter your data, delete this note and rename file .envexample -> .env. Goodluck!
