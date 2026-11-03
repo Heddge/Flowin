@@ -1,8 +1,10 @@
+
+
 # Flowin
 
 Flowin is a cross-platform note-taking application built with .NET MAUI and Blazor Hybrid. It follows an offline-first approach, allowing users to manage their notes locally and synchronize changes with a remote server.
 
-The project consists of a client application, an ASP.NET Core backend, shared API contracts, and a test project.
+The project consists of a client application, an ASP.NET Core backend, and shared API contracts.
 
 ## Features
 
@@ -19,6 +21,7 @@ The project consists of a client application, an ASP.NET Core backend, shared AP
 ## Tech Stack
 
 ### Client
+
 - C#
 - .NET 9
 - .NET MAUI
@@ -29,6 +32,7 @@ The project consists of a client application, an ASP.NET Core backend, shared AP
 - ProseMirror
 
 ### Backend
+
 - ASP.NET Core
 - ASP.NET Core Identity
 - REST API
@@ -36,6 +40,7 @@ The project consists of a client application, an ASP.NET Core backend, shared AP
 - PostgreSQL
 
 ### Infrastructure & Tools
+
 - Docker
 - Docker Compose
 - Git
@@ -82,11 +87,7 @@ The client operates independently of the server for local note management. The s
 
 Synchronization is designed around note modification timestamps and a local change-tracking mechanism.
 
-The client maintains a local SQLite database and tracks offline operations, including:
-
-- Note creation
-- Note updates
-- Note deletion
+The client maintains a local SQLite database and tracks offline operations.
 
 When connectivity is available, pending changes are sent to the server through the REST API.
 
@@ -126,46 +127,17 @@ Flowin/
 ├── Flowin.contracts/
 │   └── Shared API contracts
 │
-├── Flowin.Tests/
-│   └── Automated tests
-│
 └── docker-compose.yml
 ```
 
-## Getting Started
+## Platform Support
 
-### Requirements
-
-- .NET 9 SDK
-- Visual Studio 2022 or later
-- .NET MAUI workload
-- Docker Desktop
-
-### Setup
-
-Clone the repository:
-
-```bash
-git clone <repository-url>
-```
-
-Start the PostgreSQL database:
-
-```bash
-docker compose up -d
-```
-
-Open the solution in Visual Studio and configure the database connection string for the backend.
-
-Run the `Flowin.server` project and then launch the `Flowin` client application.
-
-### Platform Support
-
-| Platform | Status |
-|---|---|
-| Windows | Implemented and tested |
-| Android | Implemented and tested |
+| **Platform** | **Status**             |
+| ------------ | ---------------------- |
+| Windows      | Implemented and tested |
+| Android      | Implemented and tested |
 
 ## License
 
 This project is licensed under the MIT License.
+
